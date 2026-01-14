@@ -16,7 +16,6 @@ import { Head, router } from '@inertiajs/react';
 import { PortfolioLayout } from '@/layouts/portfolio';
 import { MapNode } from '@/components/game-map/map-node';
 import { mapNodes, type MapNode as MapNodeType } from '@/components/game-map/map-config';
-import { GlitchText } from '@/components/ui/glitch-text';
 
 // Generate stars for the background
 function generateStars(count: number) {
@@ -410,32 +409,74 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                 >
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ delay: showIntro ? 2.8 : 0.3, duration: 0.6 }}
+                        className="space-y-2"
                     >
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3">
-                            <GlitchText
-                                as="span"
-                                className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400"
-                                intensity={0.1}
-                                glitchInterval={8000}
-                            >
-                                AI ENGINEER
-                            </GlitchText>
-                        </h1>
-                        <motion.p 
-                            className="text-white/50 text-sm md:text-base font-mono tracking-[0.2em] uppercase"
-                            animate={{ opacity: [0.4, 0.7, 0.4] }}
-                            transition={{ duration: 3, repeat: Infinity }}
+                        {/* Primary Name - COMMANDER identity */}
+                        <motion.h1 
+                            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+                            initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                            transition={{ 
+                                delay: showIntro ? 2.9 : 0.4, 
+                                duration: 0.8, 
+                                ease: [0.22, 1, 0.36, 1] 
+                            }}
                         >
-                            Computer Vision • Deep Learning • Intelligent Systems
+                            <span 
+                                className="text-white"
+                                style={{
+                                    textShadow: '0 0 30px rgba(255, 255, 255, 0.15), 0 0 60px rgba(0, 255, 255, 0.1)',
+                                }}
+                            >
+                                Md Sajjad Hossain
+                            </span>
+                        </motion.h1>
+
+                        {/* Accent line under name */}
+                        <motion.div
+                            className="flex items-center justify-center gap-2 py-2"
+                            initial={{ opacity: 0, scaleX: 0 }}
+                            animate={{ opacity: 1, scaleX: 1 }}
+                            transition={{ 
+                                delay: showIntro ? 3.1 : 0.6, 
+                                duration: 0.6, 
+                                ease: [0.22, 1, 0.36, 1] 
+                            }}
+                        >
+                            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400/80" />
+                            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+                        </motion.div>
+
+                        {/* Secondary Role */}
+                        <motion.p 
+                            className="text-sm sm:text-base md:text-lg font-medium tracking-wide"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ 
+                                delay: showIntro ? 3.2 : 0.7, 
+                                duration: 0.6, 
+                                ease: [0.22, 1, 0.36, 1] 
+                            }}
+                        >
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">
+                                AI Engineer
+                            </span>
+                            <span className="text-white/40 mx-2">—</span>
+                            <span className="text-white/60">
+                                Computer Vision & Intelligent Systems
+                            </span>
                         </motion.p>
+
+                        {/* Company tag */}
                         <motion.p
-                            className="text-cyan-400/60 text-xs font-mono mt-2 tracking-wider"
+                            className="text-cyan-400/50 text-xs font-mono mt-1 tracking-wider uppercase"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: showIntro ? 3.2 : 0.6 }}
+                            transition={{ delay: showIntro ? 3.4 : 0.9, duration: 0.5 }}
                         >
                             Deep Mind Labs Ltd.
                         </motion.p>
