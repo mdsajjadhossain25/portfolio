@@ -299,12 +299,14 @@ export function GameMenu({ className = '' }: GameMenuProps) {
                                         {/* Selection ring */}
                                         {isSelected && (
                                             <motion.div
-                                                className="absolute inset-0 rounded-lg"
+                                                className="absolute inset-0 rounded-lg pointer-events-none"
                                                 style={{
                                                     border: `1px solid ${node.color}50`,
                                                 }}
-                                                layoutId="selection-ring"
-                                                transition={{ duration: 0.2 }}
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                transition={{ duration: 0.15 }}
                                             />
                                         )}
                                     </motion.button>

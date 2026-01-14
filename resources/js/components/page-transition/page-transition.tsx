@@ -82,7 +82,7 @@ export default function PageTransition({
                             variants={overlayVariants}
                             style={{ originX: 1 }}
                             transition={{
-                                ...overlayVariants.animate?.transition,
+                                ...(overlayVariants.animate && typeof overlayVariants.animate === 'object' && 'transition' in overlayVariants.animate ? overlayVariants.animate.transition : {}),
                                 delay: 0.1,
                             }}
                         />

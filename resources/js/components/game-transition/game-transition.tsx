@@ -14,7 +14,7 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { usePage } from '@inertiajs/react';
 import { getNodeByHref } from '../game-map/map-config';
 
-export type GameTransitionType = 'warp' | 'slash' | 'zoom' | 'glitch' | 'portal';
+export type GameTransitionType = 'warp' | 'slash' | 'zoom' | 'glitch' | 'portal' | 'cyberSlash' | 'fadeScale' | 'energyWave' | 'hudPanel';
 
 interface GameTransitionProps {
     children: ReactNode;

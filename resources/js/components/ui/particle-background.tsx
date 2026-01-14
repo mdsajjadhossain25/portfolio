@@ -49,7 +49,7 @@ export function ParticleBackground({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particlesRef = useRef<Particle[]>([]);
     const mouseRef = useRef({ x: -1000, y: -1000 });
-    const animationRef = useRef<number>();
+    const animationRef = useRef<number | undefined>(undefined);
     
     // Check for reduced motion preference
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);

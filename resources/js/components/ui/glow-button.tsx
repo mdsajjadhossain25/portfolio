@@ -126,7 +126,7 @@ const GlowButton = forwardRef<HTMLButtonElement, GlowButtonProps>(
                 
                 {/* Button content */}
                 <span className="relative z-10 flex items-center gap-2">
-                    {children}
+                    {children as React.ReactNode}
                 </span>
                 
                 {/* Corner accents */}

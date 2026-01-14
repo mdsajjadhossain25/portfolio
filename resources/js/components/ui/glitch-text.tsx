@@ -58,8 +58,8 @@ export function GlitchText({
     hoverGlitch = true,
 }: GlitchTextProps) {
     const [isGlitching, setIsGlitching] = useState(false);
-    const ref = useRef<HTMLElement>(null);
-    const isInView = useInView(ref, { once: false });
+    const ref = useRef<HTMLElement | null>(null);
+    const isInView = useInView(ref as React.RefObject<HTMLElement>, { once: false });
     const colors = glitchColors[glitchColor];
     
     // Check for reduced motion preference
@@ -122,7 +122,7 @@ export function GlitchText({
         const StaticComponent = Component;
         return (
             <StaticComponent
-                ref={ref}
+                ref={ref as any}
                 className={cn('relative inline-block', className)}
             >
                 {children}
@@ -132,7 +132,7 @@ export function GlitchText({
     
     return (
         <MotionComponent
-            ref={ref}
+            ref={ref as any}
             className={cn('relative inline-block', className)}
             variants={glitchVariants}
             animate={isGlitching ? 'glitch' : 'idle'}

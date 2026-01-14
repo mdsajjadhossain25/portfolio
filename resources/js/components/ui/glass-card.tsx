@@ -172,7 +172,7 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
                 
                 {/* Card content */}
                 <div className="relative z-10">
-                    {children}
+                    {children as React.ReactNode}
                 </div>
             </motion.div>
         );
