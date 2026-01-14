@@ -10,12 +10,36 @@
  * - Cinematic transitions to other pages
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Head, router } from '@inertiajs/react';
 import { PortfolioLayout } from '@/layouts/portfolio';
 import { MapNode } from '@/components/game-map/map-node';
 import { mapNodes, type MapNode as MapNodeType } from '@/components/game-map/map-config';
+
+// Mobile-adjusted node positions (more spread out vertically, centered horizontally)
+const mobilePositions: Record<string, { x: number; y: number }> = {
+    home: { x: 50, y: 38 },
+    about: { x: 25, y: 52 },
+    projects: { x: 75, y: 52 },
+    services: { x: 75, y: 68 },
+    blog: { x: 25, y: 68 },
+    contact: { x: 50, y: 82 },
+};
+
+// Hook to detect mobile screen
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 640);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+    
+    return isMobile;
+}
 
 // Generate stars for the background
 function generateStars(count: number) {
@@ -50,10 +74,21 @@ export default function Home() {
     const [targetNode, setTargetNode] = useState<MapNodeType | null>(null);
     const [showIntro, setShowIntro] = useState(true);
     const [systemTime, setSystemTime] = useState('');
+    const isMobile = useIsMobile();
     
     // Generate static elements once
     const [stars] = useState(() => generateStars(150));
     const [particles] = useState(() => generateParticles(20));
+    
+    // Get responsive node positions
+    const responsiveNodes = useMemo(() => {
+        return mapNodes.map(node => ({
+            ...node,
+            position: isMobile && mobilePositions[node.id] 
+                ? mobilePositions[node.id] 
+                : node.position,
+        }));
+    }, [isMobile]);
     
     // Mouse parallax
     const mouseX = useMotionValue(0);
@@ -113,14 +148,14 @@ export default function Home() {
         setTargetNode(node);
     }, []);
     
-    // Connection lines data
-    const connectionLines = mapNodes.flatMap(node => 
+    // Connection lines data (using responsive positions)
+    const connectionLines = useMemo(() => responsiveNodes.flatMap(node => 
         node.connections.map(targetId => {
-            const target = mapNodes.find(n => n.id === targetId);
+            const target = responsiveNodes.find(n => n.id === targetId);
             if (!target || node.id > targetId) return null; // Avoid duplicates
             return { from: node, to: target, id: `${node.id}-${targetId}` };
         }).filter(Boolean)
-    ) as { from: MapNodeType; to: MapNodeType; id: string }[];
+    ) as { from: MapNodeType; to: MapNodeType; id: string }[], [responsiveNodes]);
     
     return (
         <PortfolioLayout 
@@ -350,7 +385,7 @@ export default function Home() {
                     {/* Animated pulses along connections when hovered */}
                     <AnimatePresence>
                         {hoveredNode && hoveredNode.connections.map(connId => {
-                            const targetNode = mapNodes.find(n => n.id === connId);
+                            const targetNode = responsiveNodes.find(n => n.id === connId);
                             if (!targetNode) return null;
                             
                             return (
@@ -379,7 +414,7 @@ export default function Home() {
                 
                 {/* Navigation nodes */}
                 <div className="absolute inset-0" style={{ zIndex: 10 }}>
-                    {mapNodes.map((node, index) => (
+                    {responsiveNodes.map((node, index) => (
                         <motion.div
                             key={node.id}
                             initial={{ opacity: 0, scale: 0 }}
@@ -403,7 +438,7 @@ export default function Home() {
                 
                 {/* Title and branding - TOP CENTER */}
                 <motion.div
-                    className="absolute top-8 left-1/2 -translate-x-1/2 text-center pointer-events-none z-[15]"
+                    className="absolute top-20 sm:top-8 left-1/2 -translate-x-1/2 text-center pointer-events-none z-[15] px-4 w-full sm:w-auto"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: hoveredNode ? 0.3 : 1 }}
                     transition={{ duration: 0.3 }}
@@ -453,7 +488,7 @@ export default function Home() {
 
                         {/* Secondary Role */}
                         <motion.p 
-                            className="text-sm sm:text-base md:text-lg font-medium tracking-wide"
+                            className="text-xs sm:text-sm md:text-base lg:text-lg font-medium tracking-wide px-2"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ 
@@ -465,8 +500,8 @@ export default function Home() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">
                                 AI Engineer
                             </span>
-                            <span className="text-white/40 mx-2">—</span>
-                            <span className="text-white/60">
+                            <span className="text-white/40 mx-1 sm:mx-2">—</span>
+                            <span className="text-white/60 block sm:inline mt-1 sm:mt-0">
                                 Computer Vision & Intelligent Systems
                             </span>
                         </motion.p>
@@ -487,7 +522,7 @@ export default function Home() {
                 <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 20 }}>
                     {/* Top left - System status */}
                     <motion.div 
-                        className="absolute top-6 left-6"
+                        className="absolute top-6 left-6 hidden sm:block"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: showIntro ? 3 : 0.5 }}
@@ -508,13 +543,13 @@ export default function Home() {
                     
                     {/* Top right - Zone info */}
                     <motion.div 
-                        className="absolute top-20 right-6 text-right"
+                        className="absolute top-6 sm:top-20 right-6 text-right hidden sm:block"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: showIntro ? 3.1 : 0.6 }}
                     >
                         <div className="space-y-1 text-xs font-mono">
-                            <div className="text-purple-400/70">AI MODULES: {mapNodes.length}</div>
+                            <div className="text-purple-400/70">AI MODULES: {responsiveNodes.length}</div>
                             <div className="text-cyan-400/50">PIPELINES: {connectionLines.length}</div>
                             <motion.div 
                                 className="text-green-400/50"
@@ -530,7 +565,7 @@ export default function Home() {
                     <AnimatePresence>
                         {hoveredNode && (
                             <motion.div
-                                className="absolute bottom-4 left-1/2 -translate-x-1/2"
+                                className="absolute bottom-16 sm:bottom-4 left-1/2 -translate-x-1/2 w-[90%] sm:w-auto max-w-md"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 20 }}
@@ -567,15 +602,15 @@ export default function Home() {
                     <AnimatePresence>
                         {!hoveredNode && (
                             <motion.div
-                                className="absolute bottom-4 left-1/2 -translate-x-1/2"
+                                className="absolute bottom-16 sm:bottom-4 left-1/2 -translate-x-1/2 px-4"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <div className="text-white/30 text-xs font-mono text-center space-y-1">
+                                <div className="text-white/30 text-[10px] sm:text-xs font-mono text-center space-y-1">
                                     <div>SELECT A MODULE TO EXPLORE</div>
-                                    <div className="text-white/20">PRESS [TAB] OR [M] FOR QUICK NAV</div>
+                                    <div className="text-white/20 hidden sm:block">PRESS [TAB] OR [M] FOR QUICK NAV</div>
                                 </div>
                             </motion.div>
                         )}
