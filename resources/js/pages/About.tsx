@@ -1,11 +1,11 @@
 /**
  * About Page
  * 
- * Anime-style storytelling layout with:
- * - Scroll-based animations
- * - HUD skill meters
- * - Timeline/journey section
- * - Personal info panels
+ * Dynamic portfolio about page with:
+ * - Profile information from database
+ * - Skills displayed as tags/pills (NO percentage bars)
+ * - Experience timeline
+ * - Futuristic modern styling
  */
 
 import { useRef } from 'react';
@@ -15,63 +15,191 @@ import { PortfolioLayout } from '@/layouts/portfolio';
 import { GlitchText } from '@/components/ui/glitch-text';
 import { GlassCard } from '@/components/ui/glass-card';
 import { HUDPanel } from '@/components/ui/hud-panel';
-import { SkillMeter } from '@/components/ui/skill-meter';
 import { staggerContainer, staggerItem } from '@/animations/transitions';
 
-// Skills data
-const technicalSkills = [
-    { label: 'Computer Vision (OpenCV, PIL)', percentage: 92, color: 'cyan' as const },
-    { label: 'Deep Learning (PyTorch, TensorFlow)', percentage: 90, color: 'cyan' as const },
-    { label: 'CNNs / LSTMs / Transformers', percentage: 88, color: 'purple' as const },
-    { label: 'Object Detection (YOLO, Faster R-CNN)', percentage: 85, color: 'purple' as const },
-    { label: 'LLM & RAG Systems (LangChain)', percentage: 82, color: 'green' as const },
-    { label: 'Python / NumPy / Pandas', percentage: 95, color: 'cyan' as const },
-];
+// Types
+interface Skill {
+    id: number;
+    name: string;
+    icon: string | null;
+    tag: string | null;
+    description: string | null;
+    isFeatured: boolean;
+}
 
-const softSkills = [
-    { label: 'Research & Analysis', percentage: 92, color: 'crimson' as const },
-    { label: 'Technical Communication', percentage: 88, color: 'crimson' as const },
-    { label: 'Problem Decomposition', percentage: 90, color: 'green' as const },
-    { label: 'Experiment Design', percentage: 85, color: 'purple' as const },
-];
+interface SkillCategory {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    icon: string | null;
+    color: 'cyan' | 'purple' | 'green' | 'crimson';
+    skills: Skill[];
+}
 
-// Journey/Timeline data
-const journey = [
-    {
-        year: '2024',
-        title: 'Junior AI Engineer',
-        company: 'Deep Mind Labs Ltd.',
-        description: 'Building production CV systems, HAR models, and LLM-powered applications.',
-    },
-    {
-        year: '2023',
-        title: 'AI Research Intern',
-        company: 'Research Lab',
-        description: 'Developed CNN+LSTM models for human activity recognition. Published research.',
-    },
-    {
-        year: '2022',
-        title: 'ML Project Lead',
-        company: 'University of Rajshahi',
-        description: 'Led computer vision research projects. Ranked 6th in department (CGPA: 3.69/4.0).',
-    },
-    {
-        year: '2021',
-        title: 'Deep Learning Student',
-        company: 'Self-Study & Coursework',
-        description: 'Mastered PyTorch, TensorFlow. Built object detection and segmentation pipelines.',
-    },
-];
+interface Experience {
+    id: number;
+    title: string;
+    company: string;
+    location: string | null;
+    type: string;
+    year: string;
+    dateRange: string;
+    isCurrent: boolean;
+    description: string | null;
+    highlights: string[] | null;
+}
 
-// Personal info
-const personalInfo = [
-    { label: 'Company', value: 'Deep Mind Labs', icon: '🏢' },
-    { label: 'Education', value: 'Univ. of Rajshahi', icon: '🎓' },
-    { label: 'Focus', value: 'Computer Vision', icon: '👁️' },
-    { label: 'Status', value: 'Open to Research', icon: '✅' },
-];
+interface Profile {
+    fullName: string;
+    title: string;
+    subtitle: string | null;
+    shortBio: string;
+    longBio: string | null;
+    profileImage: string | null;
+    company: string | null;
+    location: string | null;
+    yearsOfExperience: number | null;
+    university: string | null;
+    cgpa: number | null;
+    academicHighlight: string | null;
+    resumeUrl: string | null;
+    email: string | null;
+    phone: string | null;
+    socialLinks: {
+        github?: string;
+        linkedin?: string;
+        twitter?: string;
+        website?: string;
+    } | null;
+    status: string;
+}
 
-export default function About() {
+interface Props {
+    profile: Profile | null;
+    skillCategories: SkillCategory[];
+    experiences: Experience[];
+}
+
+// Color mappings for skill categories
+const colorClasses = {
+    cyan: {
+        bg: 'bg-cyan-500/10',
+        border: 'border-cyan-500/30',
+        text: 'text-cyan-400',
+        hover: 'hover:bg-cyan-500/20 hover:border-cyan-500/50',
+        glow: 'shadow-cyan-500/20',
+    },
+    purple: {
+        bg: 'bg-purple-500/10',
+        border: 'border-purple-500/30',
+        text: 'text-purple-400',
+        hover: 'hover:bg-purple-500/20 hover:border-purple-500/50',
+        glow: 'shadow-purple-500/20',
+    },
+    green: {
+        bg: 'bg-green-500/10',
+        border: 'border-green-500/30',
+        text: 'text-green-400',
+        hover: 'hover:bg-green-500/20 hover:border-green-500/50',
+        glow: 'shadow-green-500/20',
+    },
+    crimson: {
+        bg: 'bg-pink-500/10',
+        border: 'border-pink-500/30',
+        text: 'text-pink-400',
+        hover: 'hover:bg-pink-500/20 hover:border-pink-500/50',
+        glow: 'shadow-pink-500/20',
+    },
+};
+
+// Default fallback data when no profile exists
+const defaultProfile: Profile = {
+    fullName: 'Your Name',
+    title: 'AI Engineer',
+    subtitle: 'Building intelligent systems',
+    shortBio: 'Welcome to my portfolio. Configure your profile in the admin dashboard.',
+    longBio: null,
+    profileImage: null,
+    company: null,
+    location: null,
+    yearsOfExperience: null,
+    university: null,
+    cgpa: null,
+    academicHighlight: null,
+    resumeUrl: null,
+    email: null,
+    phone: null,
+    socialLinks: null,
+    status: 'Open to Opportunities',
+};
+
+// Skill Tag Component - Modern pill/tag display (NO percentages)
+function SkillTag({ skill, color }: { skill: Skill; color: 'cyan' | 'purple' | 'green' | 'crimson' }) {
+    const colors = colorClasses[color];
+    
+    return (
+        <motion.div
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 ${colors.bg} ${colors.border} ${colors.hover}`}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+        >
+            {skill.icon && <span className="text-sm">{skill.icon}</span>}
+            <span className={`text-sm font-medium ${colors.text}`}>{skill.name}</span>
+            {skill.tag && (
+                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/70">
+                    {skill.tag}
+                </span>
+            )}
+            {skill.isFeatured && (
+                <span className="text-yellow-400 text-xs">⭐</span>
+            )}
+        </motion.div>
+    );
+}
+
+// Skill Category Card Component
+function SkillCategoryCard({ category }: { category: SkillCategory }) {
+    const colors = colorClasses[category.color] || colorClasses.cyan;
+    
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+        >
+            <HUDPanel
+                title={category.name}
+                status="online"
+                accentColor={category.color}
+                dataReadout={category.slug.toUpperCase().replace(/-/g, '_')}
+            >
+                <div className="space-y-4">
+                    {category.description && (
+                        <p className="text-sm text-white/50">{category.description}</p>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                        {category.skills.map((skill, index) => (
+                            <motion.div
+                                key={skill.id}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.05 }}
+                            >
+                                <SkillTag skill={skill} color={category.color} />
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </HUDPanel>
+        </motion.div>
+    );
+}
+
+export default function About({ profile: profileData, skillCategories, experiences }: Props) {
+    const profile = profileData || defaultProfile;
     const containerRef = useRef<HTMLDivElement>(null);
     const heroRef = useRef<HTMLDivElement>(null);
     const isHeroInView = useInView(heroRef, { once: true });
@@ -82,6 +210,14 @@ export default function About() {
     });
     
     const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
+    // Build personal info dynamically
+    const personalInfo = [
+        profile.company && { label: 'Company', value: profile.company, icon: '🏢' },
+        profile.university && { label: 'Education', value: profile.university, icon: '🎓' },
+        profile.location && { label: 'Location', value: profile.location, icon: '📍' },
+        { label: 'Status', value: profile.status, icon: '✅' },
+    ].filter(Boolean) as { label: string; value: string; icon: string }[];
     
     return (
         <PortfolioLayout transitionType="cyberSlash">
@@ -128,19 +264,26 @@ export default function About() {
                                     
                                     {/* Inner container */}
                                     <div className="absolute inset-[3px] rounded-2xl bg-black overflow-hidden">
-                                        {/* Placeholder for avatar */}
-                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
-                                            <motion.div
-                                                className="text-8xl"
-                                                animate={{ 
-                                                    scale: [1, 1.1, 1],
-                                                    rotate: [0, 5, -5, 0],
-                                                }}
-                                                transition={{ duration: 4, repeat: Infinity }}
-                                            >
-                                                👨‍💻
-                                            </motion.div>
-                                        </div>
+                                        {profile.profileImage ? (
+                                            <img
+                                                src={profile.profileImage}
+                                                alt={profile.fullName}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                                                <motion.div
+                                                    className="text-8xl"
+                                                    animate={{ 
+                                                        scale: [1, 1.1, 1],
+                                                        rotate: [0, 5, -5, 0],
+                                                    }}
+                                                    transition={{ duration: 4, repeat: Infinity }}
+                                                >
+                                                    👨‍💻
+                                                </motion.div>
+                                            </div>
+                                        )}
                                         
                                         {/* Scan line */}
                                         <motion.div
@@ -174,195 +317,177 @@ export default function About() {
                                     variants={staggerItem}
                                     className="text-4xl sm:text-5xl font-bold text-white mb-6"
                                 >
-                                    AI{' '}
                                     <GlitchText as="span" className="text-cyan-400">
-                                        Engineer
+                                        {profile.fullName.split(' ')[0]}
                                     </GlitchText>
-                                    <br />& Vision Systems Builder
+                                    {profile.fullName.split(' ').slice(1).length > 0 && (
+                                        <> {profile.fullName.split(' ').slice(1).join(' ')}</>
+                                    )}
+                                    <br />
+                                    <span className="text-white/80 text-3xl">{profile.title}</span>
                                 </motion.h1>
+                                
+                                {profile.subtitle && (
+                                    <motion.p
+                                        variants={staggerItem}
+                                        className="text-purple-400 text-lg mb-4 italic"
+                                    >
+                                        "{profile.subtitle}"
+                                    </motion.p>
+                                )}
                                 
                                 <motion.p
                                     variants={staggerItem}
                                     className="text-white/60 text-lg leading-relaxed mb-8"
                                 >
-                                    Junior AI Engineer at Deep Mind Labs Ltd. specializing in Computer Vision 
-                                    and Deep Learning. Building intelligent systems that see, understand, 
-                                    and act on visual data.
+                                    {profile.shortBio}
                                 </motion.p>
                                 
-                                <motion.p
-                                    variants={staggerItem}
-                                    className="text-white/50 leading-relaxed mb-8"
-                                >
-                                    Strong academic foundation from University of Rajshahi (CGPA: 3.69/4.0, 
-                                    Rank: 6th). Expertise in CNNs, LSTMs, Transformers, YOLO-based detection, 
-                                    U-Net segmentation, and LLM-powered RAG systems.
-                                </motion.p>
+                                {/* Academic info */}
+                                {(profile.university || profile.cgpa || profile.academicHighlight) && (
+                                    <motion.p
+                                        variants={staggerItem}
+                                        className="text-white/50 leading-relaxed mb-8"
+                                    >
+                                        {profile.university && (
+                                            <>Academic foundation from {profile.university}</>
+                                        )}
+                                        {profile.cgpa && (
+                                            <> (CGPA: {profile.cgpa}/4.0)</>
+                                        )}
+                                        {profile.academicHighlight && (
+                                            <>. {profile.academicHighlight}</>
+                                        )}
+                                    </motion.p>
+                                )}
                                 
                                 {/* Quick info badges */}
-                                <motion.div
-                                    variants={staggerItem}
-                                    className="grid grid-cols-2 gap-3"
-                                >
-                                    {personalInfo.map((info) => (
-                                        <div
-                                            key={info.label}
-                                            className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
-                                        >
-                                            <span className="text-xl">{info.icon}</span>
-                                            <div>
-                                                <div className="text-white/40 text-xs font-mono uppercase">{info.label}</div>
-                                                <div className="text-white text-sm font-medium">{info.value}</div>
+                                {personalInfo.length > 0 && (
+                                    <motion.div
+                                        variants={staggerItem}
+                                        className="grid grid-cols-2 gap-3"
+                                    >
+                                        {personalInfo.map((info) => (
+                                            <div
+                                                key={info.label}
+                                                className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
+                                            >
+                                                <span className="text-xl">{info.icon}</span>
+                                                <div>
+                                                    <div className="text-white/40 text-xs font-mono uppercase">{info.label}</div>
+                                                    <div className="text-white text-sm font-medium">{info.value}</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </motion.div>
+                                        ))}
+                                    </motion.div>
+                                )}
                             </motion.div>
                         </div>
                     </div>
                 </section>
                 
-                {/* Skills Section */}
-                <section className="relative py-20">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <motion.div
-                            className="text-center mb-12"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
-                                // Technical Proficiency
-                            </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
-                                AI/ML <GlitchText as="span" className="text-purple-400">Stack</GlitchText>
-                            </h2>
-                        </motion.div>
-                        
-                        <div className="grid lg:grid-cols-2 gap-8">
-                            {/* Technical Skills */}
-                            <HUDPanel
-                                title="Core AI Skills"
-                                status="online"
-                                accentColor="cyan"
-                                dataReadout="ML_STACK"
+                {/* Skills Section - Using Tags/Pills (NO percentage bars) */}
+                {skillCategories.length > 0 && (
+                    <section className="relative py-20">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <motion.div
+                                className="text-center mb-12"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
                             >
-                                <div className="space-y-6">
-                                    {technicalSkills.map((skill, index) => (
-                                        <motion.div
-                                            key={skill.label}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.1 }}
-                                        >
-                                            <SkillMeter
-                                                label={skill.label}
-                                                percentage={skill.percentage}
-                                                color={skill.color}
-                                                showLevel
-                                            />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </HUDPanel>
+                                <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                                    // Technical Proficiency
+                                </span>
+                                <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
+                                    My <GlitchText as="span" className="text-purple-400">Skills</GlitchText>
+                                </h2>
+                            </motion.div>
                             
-                            {/* Soft Skills */}
-                            <HUDPanel
-                                title="Research Skills"
-                                status="online"
-                                accentColor="purple"
-                                dataReadout="RESEARCH_SKILLS"
-                            >
-                                <div className="space-y-6">
-                                    {softSkills.map((skill, index) => (
-                                        <motion.div
-                                            key={skill.label}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.1 }}
-                                        >
-                                            <SkillMeter
-                                                label={skill.label}
-                                                percentage={skill.percentage}
-                                                color={skill.color}
-                                                showLevel
-                                            />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </HUDPanel>
-                        </div>
-                    </div>
-                </section>
-                
-                {/* Journey/Timeline Section */}
-                <section className="relative py-20">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <motion.div
-                            className="text-center mb-12"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
-                                // Research Path
-                            </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
-                                My <GlitchText as="span" className="text-crimson-400 text-pink-400">Journey</GlitchText>
-                            </h2>
-                        </motion.div>
-                        
-                        {/* Timeline */}
-                        <div className="relative">
-                            {/* Vertical line */}
-                            <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-500 via-purple-500 to-pink-500 opacity-30" />
-                            
-                            <div className="space-y-8">
-                                {journey.map((item, index) => (
-                                    <motion.div
-                                        key={item.year}
-                                        className="relative pl-20"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true, margin: '-50px' }}
-                                        transition={{ delay: index * 0.1 }}
-                                    >
-                                        {/* Year marker */}
-                                        <div className="absolute left-0 w-16 h-16 flex items-center justify-center">
-                                            <motion.div
-                                                className="w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_20px_rgba(0,255,255,0.5)]"
-                                                animate={{
-                                                    scale: [1, 1.3, 1],
-                                                    opacity: [1, 0.7, 1],
-                                                }}
-                                                transition={{
-                                                    duration: 2,
-                                                    repeat: Infinity,
-                                                    delay: index * 0.3,
-                                                }}
-                                            />
-                                        </div>
-                                        
-                                        <GlassCard variant="default" size="md" hover="lift">
-                                            <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
-                                                <div>
-                                                    <span className="text-cyan-400 font-mono text-sm">{item.year}</span>
-                                                    <h3 className="text-white font-semibold text-lg">{item.title}</h3>
-                                                </div>
-                                                <span className="text-purple-400 text-sm font-mono">
-                                                    {item.company}
-                                                </span>
-                                            </div>
-                                            <p className="text-white/50 text-sm">{item.description}</p>
-                                        </GlassCard>
-                                    </motion.div>
+                            <div className="grid gap-6 lg:grid-cols-2">
+                                {skillCategories.map((category) => (
+                                    <SkillCategoryCard key={category.id} category={category} />
                                 ))}
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                )}
+                
+                {/* Journey/Timeline Section */}
+                {experiences.length > 0 && (
+                    <section className="relative py-20">
+                        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <motion.div
+                                className="text-center mb-12"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                            >
+                                <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                                    // Research Path
+                                </span>
+                                <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
+                                    My <GlitchText as="span" className="text-pink-400">Journey</GlitchText>
+                                </h2>
+                            </motion.div>
+                            
+                            {/* Timeline */}
+                            <div className="relative">
+                                {/* Vertical line */}
+                                <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-500 via-purple-500 to-pink-500 opacity-30" />
+                                
+                                <div className="space-y-8">
+                                    {experiences.map((item, index) => (
+                                        <motion.div
+                                            key={item.id}
+                                            className="relative pl-20"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true, margin: '-50px' }}
+                                            transition={{ delay: index * 0.1 }}
+                                        >
+                                            {/* Year marker */}
+                                            <div className="absolute left-0 w-16 h-16 flex items-center justify-center">
+                                                <motion.div
+                                                    className="w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_20px_rgba(0,255,255,0.5)]"
+                                                    animate={{
+                                                        scale: [1, 1.3, 1],
+                                                        opacity: [1, 0.7, 1],
+                                                    }}
+                                                    transition={{
+                                                        duration: 2,
+                                                        repeat: Infinity,
+                                                        delay: index * 0.3,
+                                                    }}
+                                                />
+                                            </div>
+                                            
+                                            <GlassCard variant="default" size="md" hover="lift">
+                                                <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
+                                                    <div>
+                                                        <span className="text-cyan-400 font-mono text-sm">{item.year}</span>
+                                                        <h3 className="text-white font-semibold text-lg">{item.title}</h3>
+                                                    </div>
+                                                    <span className="text-purple-400 text-sm font-mono">
+                                                        {item.company}
+                                                    </span>
+                                                </div>
+                                                {item.description && (
+                                                    <p className="text-white/50 text-sm">{item.description}</p>
+                                                )}
+                                                {item.isCurrent && (
+                                                    <span className="mt-2 inline-block rounded-full bg-green-500/10 border border-green-500/30 px-2 py-0.5 text-xs text-green-400">
+                                                        Current Position
+                                                    </span>
+                                                )}
+                                            </GlassCard>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
                 
                 {/* Values Section */}
                 <section className="relative py-20">
@@ -431,6 +556,48 @@ export default function About() {
                         </div>
                     </div>
                 </section>
+
+                {/* Contact CTA Section */}
+                {(profile.email || profile.resumeUrl) && (
+                    <section className="relative py-20">
+                        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                            >
+                                <GlassCard variant="gradient" size="lg">
+                                    <h3 className="text-2xl font-bold text-white mb-4">
+                                        Let's Work Together
+                                    </h3>
+                                    <p className="text-white/60 mb-6">
+                                        Interested in AI/ML consulting, research collaboration, or just want to chat?
+                                    </p>
+                                    <div className="flex flex-wrap justify-center gap-4">
+                                        {profile.email && (
+                                            <a
+                                                href={`mailto:${profile.email}`}
+                                                className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-black font-semibold rounded-lg hover:bg-cyan-400 transition-colors"
+                                            >
+                                                📧 Get in Touch
+                                            </a>
+                                        )}
+                                        {profile.resumeUrl && (
+                                            <a
+                                                href={profile.resumeUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                                            >
+                                                📄 Download Resume
+                                            </a>
+                                        )}
+                                    </div>
+                                </GlassCard>
+                            </motion.div>
+                        </div>
+                    </section>
+                )}
             </div>
         </PortfolioLayout>
     );
