@@ -17,13 +17,13 @@ import { PortfolioLayout } from '@/layouts/portfolio';
 import { MapNode } from '@/components/game-map/map-node';
 import { mapNodes, type MapNode as MapNodeType } from '@/components/game-map/map-config';
 
-// Mobile-adjusted node positions (more spread out vertically, centered horizontally)
+// Mobile-adjusted node positions (spread out to avoid label overlaps)
 const mobilePositions: Record<string, { x: number; y: number }> = {
-    home: { x: 50, y: 38 },
-    about: { x: 25, y: 52 },
-    projects: { x: 75, y: 52 },
-    services: { x: 75, y: 68 },
-    blog: { x: 25, y: 68 },
+    home: { x: 50, y: 32 },
+    about: { x: 22, y: 48 },
+    projects: { x: 78, y: 48 },
+    services: { x: 78, y: 66 },
+    blog: { x: 22, y: 66 },
     contact: { x: 50, y: 82 },
 };
 
@@ -148,14 +148,26 @@ export default function Home() {
         setTargetNode(node);
     }, []);
     
-    // Connection lines data (using responsive positions)
-    const connectionLines = useMemo(() => responsiveNodes.flatMap(node => 
-        node.connections.map(targetId => {
-            const target = responsiveNodes.find(n => n.id === targetId);
-            if (!target || node.id > targetId) return null; // Avoid duplicates
-            return { from: node, to: target, id: `${node.id}-${targetId}` };
-        }).filter(Boolean)
-    ) as { from: MapNodeType; to: MapNodeType; id: string }[], [responsiveNodes]);
+    // FULLY CONNECTED neural network lines (every node to every other node)
+    const allConnectionLines = useMemo(() => {
+        const lines: { from: MapNodeType; to: MapNodeType; id: string; isPrimary: boolean }[] = [];
+        
+        for (let i = 0; i < responsiveNodes.length; i++) {
+            for (let j = i + 1; j < responsiveNodes.length; j++) {
+                const from = responsiveNodes[i];
+                const to = responsiveNodes[j];
+                // Check if this is a primary connection (defined in node.connections)
+                const isPrimary = from.connections.includes(to.id) || to.connections.includes(from.id);
+                lines.push({
+                    from,
+                    to,
+                    id: `${from.id}-${to.id}`,
+                    isPrimary,
+                });
+            }
+        }
+        return lines;
+    }, [responsiveNodes]);
     
     return (
         <PortfolioLayout 
@@ -206,19 +218,97 @@ export default function Home() {
                     )}
                 </AnimatePresence>
                 
-                {/* Deep space background layer */}
+                {/* Anime-inspired atmospheric background */}
+                <div className="absolute inset-0 overflow-hidden">
+                    {/* Base dark gradient with color tones */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0015] via-[#0d0a1a] to-[#050510]" />
+                    
+                    {/* Demon Slayer inspired color wash - crimson/purple atmospheric haze */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-950/40 via-transparent to-rose-950/30" />
+                    <div className="absolute inset-0 bg-gradient-to-tl from-cyan-950/20 via-transparent to-indigo-950/30" />
+                    
+                    {/* Abstract silhouette mountains/landscape at bottom */}
+                    <svg 
+                        className="absolute bottom-0 left-0 right-0 w-full h-[40%] opacity-30"
+                        viewBox="0 0 1440 400" 
+                        preserveAspectRatio="xMidYMax slice"
+                        fill="none"
+                    >
+                        {/* Far mountains - darkest */}
+                        <path 
+                            d="M0,400 L0,280 Q200,200 400,260 T800,220 T1200,280 L1440,240 L1440,400 Z" 
+                            fill="url(#mountain-grad-1)"
+                        />
+                        {/* Mid mountains */}
+                        <path 
+                            d="M0,400 L0,320 Q150,260 350,300 T700,270 T1100,310 L1440,290 L1440,400 Z" 
+                            fill="url(#mountain-grad-2)"
+                        />
+                        {/* Near foliage silhouette */}
+                        <path 
+                            d="M0,400 L0,360 Q100,340 200,360 T400,350 T600,365 T800,355 T1000,370 T1200,360 T1440,370 L1440,400 Z" 
+                            fill="url(#mountain-grad-3)"
+                        />
+                        <defs>
+                            <linearGradient id="mountain-grad-1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#1a0a2e" />
+                                <stop offset="100%" stopColor="#0d0515" />
+                            </linearGradient>
+                            <linearGradient id="mountain-grad-2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#15081f" />
+                                <stop offset="100%" stopColor="#0a0410" />
+                            </linearGradient>
+                            <linearGradient id="mountain-grad-3" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#0f0518" />
+                                <stop offset="100%" stopColor="#050208" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    
+                    {/* Atmospheric glow orbs - inspired by anime lighting */}
+                    <motion.div 
+                        className="absolute top-[15%] left-[10%] w-[300px] h-[300px] rounded-full opacity-20"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)',
+                            filter: 'blur(40px)',
+                        }}
+                        animate={{
+                            scale: [1, 1.2, 1],
+                            opacity: [0.15, 0.25, 0.15],
+                        }}
+                        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                    <motion.div 
+                        className="absolute top-[30%] right-[5%] w-[250px] h-[250px] rounded-full opacity-15"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%)',
+                            filter: 'blur(50px)',
+                        }}
+                        animate={{
+                            scale: [1, 1.15, 1],
+                            opacity: [0.1, 0.2, 0.1],
+                        }}
+                        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+                    />
+                    <motion.div 
+                        className="absolute bottom-[20%] left-[20%] w-[400px] h-[200px] rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(ellipse, rgba(6,182,212,0.3) 0%, transparent 70%)',
+                            filter: 'blur(60px)',
+                        }}
+                        animate={{
+                            x: [0, 20, 0],
+                            opacity: [0.08, 0.15, 0.08],
+                        }}
+                        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                </div>
+                
+                {/* Deep space background layer with stars */}
                 <motion.div 
                     className="absolute inset-[-50px]"
                     style={{ x: bgX, y: bgY }}
                 >
-                    {/* Nebula gradients */}
-                    <div className="absolute inset-0 bg-gradient-radial from-purple-900/30 via-transparent to-transparent" 
-                         style={{ transform: 'translate(20%, -10%)' }} />
-                    <div className="absolute inset-0 bg-gradient-radial from-cyan-900/20 via-transparent to-transparent" 
-                         style={{ transform: 'translate(-30%, 30%)' }} />
-                    <div className="absolute inset-0 bg-gradient-radial from-pink-900/15 via-transparent to-transparent" 
-                         style={{ transform: 'translate(40%, 50%)' }} />
-                    
                     {/* Stars */}
                     {stars.map(star => (
                         <motion.div
@@ -251,11 +341,11 @@ export default function Home() {
                 >
                     {/* 3D perspective grid (floor) */}
                     <div 
-                        className="absolute bottom-0 left-[-20%] right-[-20%] h-[60%] opacity-[0.06]"
+                        className="absolute bottom-0 left-[-20%] right-[-20%] h-[60%] opacity-[0.04]"
                         style={{
                             backgroundImage: `
-                                linear-gradient(rgba(0, 245, 255, 1) 1px, transparent 1px),
-                                linear-gradient(90deg, rgba(0, 245, 255, 1) 1px, transparent 1px)
+                                linear-gradient(rgba(139, 92, 246, 1) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(139, 92, 246, 1) 1px, transparent 1px)
                             `,
                             backgroundSize: '80px 80px',
                             transform: 'perspective(400px) rotateX(70deg)',
@@ -265,7 +355,7 @@ export default function Home() {
                     
                     {/* Vertical grid overlay */}
                     <div 
-                        className="absolute inset-0 opacity-[0.03]"
+                        className="absolute inset-0 opacity-[0.02]"
                         style={{
                             backgroundImage: `
                                 linear-gradient(rgba(0, 245, 255, 1) 1px, transparent 1px),
@@ -336,10 +426,11 @@ export default function Home() {
                 {/* Radial vignette */}
                 <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.3)_60%,rgba(0,0,0,0.8)_100%)]" />
                 
-                {/* Connection lines SVG */}
+                {/* Neural Network Connection Lines SVG */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
                     <defs>
-                        {connectionLines.map(line => (
+                        {/* Gradients for all connections */}
+                        {allConnectionLines.map(line => (
                             <linearGradient
                                 key={`grad-${line.id}`}
                                 id={`line-grad-${line.id}`}
@@ -348,18 +439,34 @@ export default function Home() {
                                 x2={`${line.to.position.x}%`}
                                 y2={`${line.to.position.y}%`}
                             >
-                                <stop offset="0%" stopColor={line.from.color} stopOpacity="0.4" />
-                                <stop offset="50%" stopColor="#ffffff" stopOpacity="0.15" />
-                                <stop offset="100%" stopColor={line.to.color} stopOpacity="0.4" />
+                                <stop offset="0%" stopColor={line.from.color} stopOpacity={line.isPrimary ? 0.5 : 0.15} />
+                                <stop offset="50%" stopColor="#ffffff" stopOpacity={line.isPrimary ? 0.2 : 0.05} />
+                                <stop offset="100%" stopColor={line.to.color} stopOpacity={line.isPrimary ? 0.5 : 0.15} />
                             </linearGradient>
                         ))}
+                        
+                        {/* Animated gradient for pulse effect */}
+                        <linearGradient id="pulse-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#00f5ff" stopOpacity="0">
+                                <animate attributeName="offset" values="-0.5;1" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                            <stop offset="50%" stopColor="#00f5ff" stopOpacity="0.8">
+                                <animate attributeName="offset" values="0;1.5" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                            <stop offset="100%" stopColor="#00f5ff" stopOpacity="0">
+                                <animate attributeName="offset" values="0.5;2" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                        </linearGradient>
                     </defs>
                     
-                    {/* Connection lines */}
-                    {connectionLines.map(line => {
+                    {/* Render all neural network connections */}
+                    {allConnectionLines.map((line, index) => {
                         const isHighlighted = 
                             hoveredNode?.id === line.from.id || 
                             hoveredNode?.id === line.to.id;
+                        
+                        // On mobile, only show primary connections to reduce clutter
+                        if (isMobile && !line.isPrimary && !isHighlighted) return null;
                         
                         return (
                             <motion.line
@@ -369,46 +476,70 @@ export default function Home() {
                                 x2={`${line.to.position.x}%`}
                                 y2={`${line.to.position.y}%`}
                                 stroke={`url(#line-grad-${line.id})`}
-                                strokeWidth={isHighlighted ? 2 : 1}
-                                strokeDasharray="8,8"
+                                strokeWidth={isHighlighted ? 1.5 : line.isPrimary ? 1 : 0.5}
+                                strokeDasharray={line.isPrimary ? "none" : "4,6"}
                                 initial={{ pathLength: 0, opacity: 0 }}
                                 animate={{ 
                                     pathLength: 1, 
-                                    opacity: isHighlighted ? 0.9 : 0.4,
-                                    strokeWidth: isHighlighted ? 2 : 1,
+                                    opacity: isHighlighted ? 0.9 : line.isPrimary ? 0.5 : 0.2,
                                 }}
-                                transition={{ duration: 2, ease: 'easeOut' }}
+                                transition={{ 
+                                    duration: 1.5 + index * 0.1, 
+                                    ease: 'easeOut',
+                                    delay: index * 0.05,
+                                }}
                             />
                         );
                     })}
                     
-                    {/* Animated pulses along connections when hovered */}
+                    {/* Energy pulses flowing through network */}
+                    {!isMobile && allConnectionLines.filter(l => l.isPrimary).map((line, index) => (
+                        <motion.circle
+                            key={`flow-${line.id}`}
+                            r="2"
+                            fill={line.from.color}
+                            style={{ filter: `drop-shadow(0 0 4px ${line.from.color})` }}
+                            initial={{ 
+                                cx: `${line.from.position.x}%`, 
+                                cy: `${line.from.position.y}%`,
+                                opacity: 0.6,
+                            }}
+                            animate={{ 
+                                cx: [`${line.from.position.x}%`, `${line.to.position.x}%`],
+                                cy: [`${line.from.position.y}%`, `${line.to.position.y}%`],
+                                opacity: [0, 0.8, 0],
+                            }}
+                            transition={{ 
+                                duration: 3 + index * 0.5, 
+                                repeat: Infinity, 
+                                ease: 'linear',
+                                delay: index * 0.8,
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Enhanced pulses when node is hovered */}
                     <AnimatePresence>
-                        {hoveredNode && hoveredNode.connections.map(connId => {
-                            const targetNode = responsiveNodes.find(n => n.id === connId);
-                            if (!targetNode) return null;
-                            
-                            return (
-                                <motion.circle
-                                    key={`pulse-${hoveredNode.id}-${connId}`}
-                                    r="4"
-                                    fill={hoveredNode.color}
-                                    initial={{ 
-                                        cx: `${hoveredNode.position.x}%`, 
-                                        cy: `${hoveredNode.position.y}%`,
-                                        opacity: 1,
-                                    }}
-                                    animate={{ 
-                                        cx: `${targetNode.position.x}%`, 
-                                        cy: `${targetNode.position.y}%`,
-                                        opacity: [1, 0.6, 0],
-                                    }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                                    style={{ filter: `drop-shadow(0 0 8px ${hoveredNode.color})` }}
-                                />
-                            );
-                        })}
+                        {hoveredNode && responsiveNodes.filter(n => n.id !== hoveredNode.id).map(targetNode => (
+                            <motion.circle
+                                key={`pulse-${hoveredNode.id}-${targetNode.id}`}
+                                r="3"
+                                fill={hoveredNode.color}
+                                initial={{ 
+                                    cx: `${hoveredNode.position.x}%`, 
+                                    cy: `${hoveredNode.position.y}%`,
+                                    opacity: 1,
+                                }}
+                                animate={{ 
+                                    cx: `${targetNode.position.x}%`, 
+                                    cy: `${targetNode.position.y}%`,
+                                    opacity: [1, 0.6, 0],
+                                }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
+                                style={{ filter: `drop-shadow(0 0 6px ${hoveredNode.color})` }}
+                            />
+                        ))}
                     </AnimatePresence>
                 </svg>
                 
@@ -431,6 +562,7 @@ export default function Home() {
                                 isActive={node.id === 'home'}
                                 onNavigationStart={handleNavigationStart}
                                 onHover={setHoveredNode}
+                                isMobile={isMobile}
                             />
                         </motion.div>
                     ))}
@@ -550,7 +682,7 @@ export default function Home() {
                     >
                         <div className="space-y-1 text-xs font-mono">
                             <div className="text-purple-400/70">AI MODULES: {responsiveNodes.length}</div>
-                            <div className="text-cyan-400/50">PIPELINES: {connectionLines.length}</div>
+                            <div className="text-cyan-400/50">NEURAL LINKS: {allConnectionLines.length}</div>
                             <motion.div 
                                 className="text-green-400/50"
                                 animate={{ opacity: [0.5, 1, 0.5] }}

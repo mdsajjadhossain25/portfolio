@@ -23,7 +23,7 @@ export interface MapNode {
 export const mapNodes: MapNode[] = [
     {
         id: 'home',
-        label: 'AI COMMAND CENTER',
+        label: 'COMMAND CENTER',
         sublabel: 'Neural Hub',
         href: '/',
         position: { x: 50, y: 45 },
@@ -37,8 +37,8 @@ export const mapNodes: MapNode[] = [
     },
     {
         id: 'about',
-        label: 'PROFILE & RESEARCH',
-        sublabel: 'Training Data',
+        label: 'ABOUT',
+        sublabel: 'Profile & Research',
         href: '/about',
         position: { x: 25, y: 28 },
         color: '#a78bfa',
@@ -51,8 +51,8 @@ export const mapNodes: MapNode[] = [
     },
     {
         id: 'projects',
-        label: 'AI PROJECTS LAB',
-        sublabel: 'Model Archive',
+        label: 'PROJECTS',
+        sublabel: 'AI Lab',
         href: '/projects',
         position: { x: 75, y: 24 },
         color: '#22d3ee',
@@ -65,8 +65,8 @@ export const mapNodes: MapNode[] = [
     },
     {
         id: 'services',
-        label: 'AI SOLUTIONS',
-        sublabel: 'Consulting',
+        label: 'SERVICES',
+        sublabel: 'AI Solutions',
         href: '/services',
         position: { x: 78, y: 58 },
         color: '#f472b6',
@@ -79,8 +79,8 @@ export const mapNodes: MapNode[] = [
     },
     {
         id: 'blog',
-        label: 'RESEARCH NOTES',
-        sublabel: 'Knowledge Base',
+        label: 'BLOG',
+        sublabel: 'Research Notes',
         href: '/blog',
         position: { x: 20, y: 62 },
         color: '#4ade80',
@@ -93,8 +93,8 @@ export const mapNodes: MapNode[] = [
     },
     {
         id: 'contact',
-        label: 'COLLABORATION',
-        sublabel: 'Connect Terminal',
+        label: 'CONTACT',
+        sublabel: 'Connect',
         href: '/contact',
         position: { x: 50, y: 78 },
         color: '#fb923c',
