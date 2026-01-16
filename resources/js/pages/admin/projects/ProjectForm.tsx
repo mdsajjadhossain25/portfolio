@@ -229,13 +229,9 @@ export default function ProjectForm({ project, projectTypes, statuses }: Props) 
 
         if (project) {
             formData.append('_method', 'PUT');
-            post(`/admin/projects/${project.slug}`, {
-                forceFormData: true,
-            });
+            router.post(`/admin/projects/${project.id}`, formData);
         } else {
-            post('/admin/projects', {
-                forceFormData: true,
-            });
+            router.post('/admin/projects', formData);
         }
     };
 
@@ -293,7 +289,7 @@ export default function ProjectForm({ project, projectTypes, statuses }: Props) 
 
     const deleteExistingImage = (imageId: number) => {
         if (confirm('Are you sure you want to delete this image?')) {
-            router.delete(`/admin/projects/${project?.slug}/images/${imageId}`, {
+            router.delete(`/admin/projects/${project?.id}/images/${imageId}`, {
                 preserveScroll: true,
                 onSuccess: () => {
                     setExistingImages(existingImages.filter(img => img.id !== imageId));

@@ -86,7 +86,7 @@ const HUDPanel = forwardRef<HTMLDivElement, HUDPanelProps>(
             <motion.div
                 ref={ref}
                 className={cn(
-                    'relative bg-black/40 backdrop-blur-md border rounded-lg overflow-hidden',
+                    'relative bg-white/80 dark:bg-black/40 backdrop-blur-md border rounded-lg overflow-hidden',
                     colors.border,
                     `shadow-lg ${colors.glow}`,
                     className
@@ -99,11 +99,11 @@ const HUDPanel = forwardRef<HTMLDivElement, HUDPanelProps>(
             >
                 {/* Background grid pattern */}
                 <div 
-                    className="absolute inset-0 opacity-[0.02] pointer-events-none"
+                    className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02] pointer-events-none"
                     style={{
                         backgroundImage: `
-                            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+                            linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
                         `,
                         backgroundSize: '20px 20px',
                     }}
@@ -141,12 +141,12 @@ const HUDPanel = forwardRef<HTMLDivElement, HUDPanelProps>(
                 
                 {/* Header section */}
                 {showHeader && (
-                    <div className={cn('flex items-center justify-between px-4 py-2 border-b', colors.border, 'bg-white/5')}>
+                    <div className={cn('flex items-center justify-between px-4 py-2 border-b', colors.border, 'bg-gray-100/80 dark:bg-white/5')}>
                         <div className="flex items-center gap-3">
                             {/* Status indicator */}
                             <div className="flex items-center gap-2">
                                 <div className={cn('w-2 h-2 rounded-full shadow-lg', statusColors[status])} />
-                                <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">
+                                <span className="text-[10px] font-mono text-gray-500 dark:text-white/50 uppercase tracking-wider">
                                     {statusLabels[status]}
                                 </span>
                             </div>
@@ -154,7 +154,7 @@ const HUDPanel = forwardRef<HTMLDivElement, HUDPanelProps>(
                             {/* Title */}
                             {title && (
                                 <>
-                                    <div className="w-[1px] h-4 bg-white/20" />
+                                    <div className="w-[1px] h-4 bg-gray-300 dark:bg-white/20" />
                                     <h3 className={cn('text-sm font-mono font-medium uppercase tracking-wider', colors.text)}>
                                         {title}
                                     </h3>
@@ -164,16 +164,16 @@ const HUDPanel = forwardRef<HTMLDivElement, HUDPanelProps>(
                         
                         {/* Data readout */}
                         {dataReadout && (
-                            <div className="text-[10px] font-mono text-white/40">
+                            <div className="text-[10px] font-mono text-gray-400 dark:text-white/40">
                                 {dataReadout}
                             </div>
                         )}
                         
                         {/* Technical decorations */}
                         <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 rounded-full bg-white/30" />
-                            <div className="w-1 h-1 rounded-full bg-white/30" />
-                            <div className="w-1 h-1 rounded-full bg-white/30" />
+                            <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-white/30" />
+                            <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-white/30" />
+                            <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-white/30" />
                         </div>
                     </div>
                 )}

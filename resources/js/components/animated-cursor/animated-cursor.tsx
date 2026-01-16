@@ -12,8 +12,9 @@
  * - Trail particles: Throttled, non-blocking
  */
 
-import { useCallback, useEffect, useRef, useState, memo } from 'react';
+import { useCallback, useEffect, useRef, useState, memo, useMemo } from 'react';
 import { useCursorPosition } from '@/hooks/use-cursor-position';
+import { useAppearance } from '@/hooks/use-appearance';
 import {
     CursorState,
     detectCursorState,
@@ -32,192 +33,217 @@ const CURSOR_CONFIG = {
     crossLength: 12,  // Crosshair arm length
 };
 
+// Theme-aware color definitions
+const getThemeColors = (isDark: boolean) => ({
+    // Primary cursor color - green for dark, dark purple/blue for light
+    primary: isDark ? 'rgb(0, 255, 136)' : 'rgb(59, 130, 246)',
+    primaryRgba: (alpha: number) => isDark ? `rgba(0, 255, 136, ${alpha})` : `rgba(59, 130, 246, ${alpha})`,
+    // Hover color - purple for both modes
+    hover: 'rgb(167, 139, 250)',
+    hoverRgba: (alpha: number) => `rgba(167, 139, 250, ${alpha})`,
+    // Grab color - orange for both modes
+    grab: 'rgb(255, 107, 0)',
+    grabRgba: (alpha: number) => `rgba(255, 107, 0, ${alpha})`,
+    // Click color - white for dark, dark for light
+    click: isDark ? 'rgb(255, 255, 255)' : 'rgb(30, 41, 59)',
+    clickRgba: (alpha: number) => isDark ? `rgba(255, 255, 255, ${alpha})` : `rgba(30, 41, 59, ${alpha})`,
+});
+
 // State-based styles for DIAMOND core (45deg rotated square)
-const DOT_STYLES: Record<CursorState, React.CSSProperties> = {
-    default: {
-        width: CURSOR_CONFIG.coreSize,
-        height: CURSOR_CONFIG.coreSize,
-        backgroundColor: 'transparent',
-        border: '2px solid rgb(0, 255, 136)',
-        boxShadow: '0 0 8px rgba(0, 255, 136, 0.9), inset 0 0 4px rgba(0, 255, 136, 0.3)',
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    hover: {
-        width: CURSOR_CONFIG.coreSize * 1.4,
-        height: CURSOR_CONFIG.coreSize * 1.4,
-        backgroundColor: 'rgba(167, 139, 250, 0.3)',
-        border: '2px solid rgb(167, 139, 250)',
-        boxShadow: '0 0 15px rgba(167, 139, 250, 0.9), inset 0 0 6px rgba(167, 139, 250, 0.5)',
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    click: {
-        width: CURSOR_CONFIG.coreSize * 0.6,
-        height: CURSOR_CONFIG.coreSize * 0.6,
-        backgroundColor: 'rgb(255, 255, 255)',
-        border: '2px solid rgb(255, 255, 255)',
-        boxShadow: '0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(0, 255, 136, 0.5)',
-        transform: 'translate(-50%, -50%) rotate(45deg) scale(1.5)',
-    },
-    link: {
-        width: CURSOR_CONFIG.coreSize * 1.6,
-        height: CURSOR_CONFIG.coreSize * 1.6,
-        backgroundColor: 'rgba(0, 255, 136, 0.2)',
-        border: '2px solid rgb(0, 255, 136)',
-        boxShadow: '0 0 20px rgba(0, 255, 136, 1), inset 0 0 8px rgba(0, 255, 136, 0.6)',
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    text: {
-        width: 3,
-        height: CURSOR_CONFIG.coreSize * 2.5,
-        backgroundColor: 'rgb(0, 255, 136)',
-        border: 'none',
-        boxShadow: '0 0 10px rgba(0, 255, 136, 0.8)',
-        transform: 'translate(-50%, -50%)',
-    },
-    grab: {
-        width: CURSOR_CONFIG.coreSize * 1.2,
-        height: CURSOR_CONFIG.coreSize * 1.2,
-        backgroundColor: 'rgba(255, 107, 0, 0.3)',
-        border: '2px solid rgb(255, 107, 0)',
-        boxShadow: '0 0 12px rgba(255, 107, 0, 0.9)',
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    grabbing: {
-        width: CURSOR_CONFIG.coreSize * 0.8,
-        height: CURSOR_CONFIG.coreSize * 0.8,
-        backgroundColor: 'rgb(255, 107, 0)',
-        border: '2px solid rgb(255, 107, 0)',
-        boxShadow: '0 0 15px rgba(255, 107, 0, 1)',
-        transform: 'translate(-50%, -50%) rotate(45deg) scale(0.8)',
-    },
-    hidden: {
-        width: 0,
-        height: 0,
-        backgroundColor: 'transparent',
-        border: 'none',
-        boxShadow: 'none',
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
+const getDotStyles = (isDark: boolean): Record<CursorState, React.CSSProperties> => {
+    const colors = getThemeColors(isDark);
+    return {
+        default: {
+            width: CURSOR_CONFIG.coreSize,
+            height: CURSOR_CONFIG.coreSize,
+            backgroundColor: 'transparent',
+            border: `2px solid ${colors.primary}`,
+            boxShadow: `0 0 8px ${colors.primaryRgba(0.9)}, inset 0 0 4px ${colors.primaryRgba(0.3)}`,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        hover: {
+            width: CURSOR_CONFIG.coreSize * 1.4,
+            height: CURSOR_CONFIG.coreSize * 1.4,
+            backgroundColor: colors.hoverRgba(0.3),
+            border: `2px solid ${colors.hover}`,
+            boxShadow: `0 0 15px ${colors.hoverRgba(0.9)}, inset 0 0 6px ${colors.hoverRgba(0.5)}`,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        click: {
+            width: CURSOR_CONFIG.coreSize * 0.6,
+            height: CURSOR_CONFIG.coreSize * 0.6,
+            backgroundColor: colors.click,
+            border: `2px solid ${colors.click}`,
+            boxShadow: `0 0 20px ${colors.clickRgba(1)}, 0 0 40px ${colors.primaryRgba(0.5)}`,
+            transform: 'translate(-50%, -50%) rotate(45deg) scale(1.5)',
+        },
+        link: {
+            width: CURSOR_CONFIG.coreSize * 1.6,
+            height: CURSOR_CONFIG.coreSize * 1.6,
+            backgroundColor: colors.primaryRgba(0.2),
+            border: `2px solid ${colors.primary}`,
+            boxShadow: `0 0 20px ${colors.primaryRgba(1)}, inset 0 0 8px ${colors.primaryRgba(0.6)}`,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        text: {
+            width: 3,
+            height: CURSOR_CONFIG.coreSize * 2.5,
+            backgroundColor: colors.primary,
+            border: 'none',
+            boxShadow: `0 0 10px ${colors.primaryRgba(0.8)}`,
+            transform: 'translate(-50%, -50%)',
+        },
+        grab: {
+            width: CURSOR_CONFIG.coreSize * 1.2,
+            height: CURSOR_CONFIG.coreSize * 1.2,
+            backgroundColor: colors.grabRgba(0.3),
+            border: `2px solid ${colors.grab}`,
+            boxShadow: `0 0 12px ${colors.grabRgba(0.9)}`,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        grabbing: {
+            width: CURSOR_CONFIG.coreSize * 0.8,
+            height: CURSOR_CONFIG.coreSize * 0.8,
+            backgroundColor: colors.grab,
+            border: `2px solid ${colors.grab}`,
+            boxShadow: `0 0 15px ${colors.grabRgba(1)}`,
+            transform: 'translate(-50%, -50%) rotate(45deg) scale(0.8)',
+        },
+        hidden: {
+            width: 0,
+            height: 0,
+            backgroundColor: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+    };
 };
 
 // Outer targeting ring - rotated square (diamond shape)
-const RING_STYLES: Record<CursorState, React.CSSProperties> = {
-    default: {
-        width: CURSOR_CONFIG.ringSize,
-        height: CURSOR_CONFIG.ringSize,
-        borderColor: 'rgba(0, 255, 136, 0.4)',
-        borderWidth: 1,
-        opacity: 0.6,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    hover: {
-        width: CURSOR_CONFIG.ringSize * 1.4,
-        height: CURSOR_CONFIG.ringSize * 1.4,
-        borderColor: 'rgba(167, 139, 250, 0.7)',
-        borderWidth: 2,
-        opacity: 0.9,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    click: {
-        width: CURSOR_CONFIG.ringSize * 1.8,
-        height: CURSOR_CONFIG.ringSize * 1.8,
-        borderColor: 'rgba(255, 255, 255, 0.6)',
-        borderWidth: 1,
-        opacity: 0.4,
-        transform: 'translate(-50%, -50%) rotate(45deg) scale(1.2)',
-    },
-    link: {
-        width: CURSOR_CONFIG.ringSize * 1.5,
-        height: CURSOR_CONFIG.ringSize * 1.5,
-        borderColor: 'rgba(0, 255, 136, 0.6)',
-        borderWidth: 2,
-        opacity: 0.8,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    text: {
-        width: CURSOR_CONFIG.ringSize * 0.6,
-        height: CURSOR_CONFIG.ringSize * 0.6,
-        borderColor: 'rgba(0, 255, 136, 0.3)',
-        borderWidth: 1,
-        opacity: 0.4,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    grab: {
-        width: CURSOR_CONFIG.ringSize * 1.2,
-        height: CURSOR_CONFIG.ringSize * 1.2,
-        borderColor: 'rgba(255, 107, 0, 0.6)',
-        borderWidth: 2,
-        opacity: 0.7,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
-    grabbing: {
-        width: CURSOR_CONFIG.ringSize,
-        height: CURSOR_CONFIG.ringSize,
-        borderColor: 'rgba(255, 107, 0, 0.9)',
-        borderWidth: 2,
-        opacity: 0.9,
-        transform: 'translate(-50%, -50%) rotate(45deg) scale(0.9)',
-    },
-    hidden: {
-        width: 0,
-        height: 0,
-        borderColor: 'transparent',
-        borderWidth: 0,
-        opacity: 0,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-    },
+const getRingStyles = (isDark: boolean): Record<CursorState, React.CSSProperties> => {
+    const colors = getThemeColors(isDark);
+    return {
+        default: {
+            width: CURSOR_CONFIG.ringSize,
+            height: CURSOR_CONFIG.ringSize,
+            borderColor: colors.primaryRgba(0.4),
+            borderWidth: 1,
+            opacity: 0.6,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        hover: {
+            width: CURSOR_CONFIG.ringSize * 1.4,
+            height: CURSOR_CONFIG.ringSize * 1.4,
+            borderColor: colors.hoverRgba(0.7),
+            borderWidth: 2,
+            opacity: 0.9,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        click: {
+            width: CURSOR_CONFIG.ringSize * 1.8,
+            height: CURSOR_CONFIG.ringSize * 1.8,
+            borderColor: colors.clickRgba(0.6),
+            borderWidth: 1,
+            opacity: 0.4,
+            transform: 'translate(-50%, -50%) rotate(45deg) scale(1.2)',
+        },
+        link: {
+            width: CURSOR_CONFIG.ringSize * 1.5,
+            height: CURSOR_CONFIG.ringSize * 1.5,
+            borderColor: colors.primaryRgba(0.6),
+            borderWidth: 2,
+            opacity: 0.8,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        text: {
+            width: CURSOR_CONFIG.ringSize * 0.6,
+            height: CURSOR_CONFIG.ringSize * 0.6,
+            borderColor: colors.primaryRgba(0.3),
+            borderWidth: 1,
+            opacity: 0.4,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        grab: {
+            width: CURSOR_CONFIG.ringSize * 1.2,
+            height: CURSOR_CONFIG.ringSize * 1.2,
+            borderColor: colors.grabRgba(0.6),
+            borderWidth: 2,
+            opacity: 0.7,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+        grabbing: {
+            width: CURSOR_CONFIG.ringSize,
+            height: CURSOR_CONFIG.ringSize,
+            borderColor: colors.grabRgba(0.9),
+            borderWidth: 2,
+            opacity: 0.9,
+            transform: 'translate(-50%, -50%) rotate(45deg) scale(0.9)',
+        },
+        hidden: {
+            width: 0,
+            height: 0,
+            borderColor: 'transparent',
+            borderWidth: 0,
+            opacity: 0,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+        },
+    };
 };
 
-// Ambient glow with neon green theme
-const GLOW_STYLES: Record<CursorState, React.CSSProperties> = {
-    default: {
-        width: CURSOR_CONFIG.glowSize,
-        height: CURSOR_CONFIG.glowSize,
-        background: 'radial-gradient(circle, rgba(0, 255, 136, 0.12) 0%, transparent 70%)',
-        opacity: 0.6,
-    },
-    hover: {
-        width: CURSOR_CONFIG.glowSize * 1.5,
-        height: CURSOR_CONFIG.glowSize * 1.5,
-        background: 'radial-gradient(circle, rgba(167, 139, 250, 0.2) 0%, transparent 70%)',
-        opacity: 0.8,
-    },
-    click: {
-        width: CURSOR_CONFIG.glowSize * 2.2,
-        height: CURSOR_CONFIG.glowSize * 2.2,
-        background: 'radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(0, 255, 136, 0.15) 50%, transparent 70%)',
-        opacity: 1,
-    },
-    link: {
-        width: CURSOR_CONFIG.glowSize * 1.6,
-        height: CURSOR_CONFIG.glowSize * 1.6,
-        background: 'radial-gradient(circle, rgba(0, 255, 136, 0.18) 0%, transparent 70%)',
-        opacity: 0.7,
-    },
-    text: {
-        width: CURSOR_CONFIG.glowSize * 0.6,
-        height: CURSOR_CONFIG.glowSize * 0.6,
-        background: 'radial-gradient(circle, rgba(0, 255, 136, 0.08) 0%, transparent 70%)',
-        opacity: 0.4,
-    },
-    grab: {
-        width: CURSOR_CONFIG.glowSize * 1.2,
-        height: CURSOR_CONFIG.glowSize * 1.2,
-        background: 'radial-gradient(circle, rgba(255, 107, 0, 0.18) 0%, transparent 70%)',
-        opacity: 0.7,
-    },
-    grabbing: {
-        width: CURSOR_CONFIG.glowSize,
-        height: CURSOR_CONFIG.glowSize,
-        background: 'radial-gradient(circle, rgba(255, 107, 0, 0.25) 0%, transparent 70%)',
-        opacity: 0.9,
-    },
-    hidden: {
-        width: 0,
-        height: 0,
-        background: 'transparent',
-        opacity: 0,
-    },
+// Ambient glow with theme-aware colors
+const getGlowStyles = (isDark: boolean): Record<CursorState, React.CSSProperties> => {
+    const colors = getThemeColors(isDark);
+    return {
+        default: {
+            width: CURSOR_CONFIG.glowSize,
+            height: CURSOR_CONFIG.glowSize,
+            background: `radial-gradient(circle, ${colors.primaryRgba(0.12)} 0%, transparent 70%)`,
+            opacity: 0.6,
+        },
+        hover: {
+            width: CURSOR_CONFIG.glowSize * 1.5,
+            height: CURSOR_CONFIG.glowSize * 1.5,
+            background: `radial-gradient(circle, ${colors.hoverRgba(0.2)} 0%, transparent 70%)`,
+            opacity: 0.8,
+        },
+        click: {
+            width: CURSOR_CONFIG.glowSize * 2.2,
+            height: CURSOR_CONFIG.glowSize * 2.2,
+            background: `radial-gradient(circle, ${colors.clickRgba(0.35)} 0%, ${colors.primaryRgba(0.15)} 50%, transparent 70%)`,
+            opacity: 1,
+        },
+        link: {
+            width: CURSOR_CONFIG.glowSize * 1.6,
+            height: CURSOR_CONFIG.glowSize * 1.6,
+            background: `radial-gradient(circle, ${colors.primaryRgba(0.18)} 0%, transparent 70%)`,
+            opacity: 0.7,
+        },
+        text: {
+            width: CURSOR_CONFIG.glowSize * 0.6,
+            height: CURSOR_CONFIG.glowSize * 0.6,
+            background: `radial-gradient(circle, ${colors.primaryRgba(0.08)} 0%, transparent 70%)`,
+            opacity: 0.4,
+        },
+        grab: {
+            width: CURSOR_CONFIG.glowSize * 1.2,
+            height: CURSOR_CONFIG.glowSize * 1.2,
+            background: `radial-gradient(circle, ${colors.grabRgba(0.18)} 0%, transparent 70%)`,
+            opacity: 0.7,
+        },
+        grabbing: {
+            width: CURSOR_CONFIG.glowSize,
+            height: CURSOR_CONFIG.glowSize,
+            background: `radial-gradient(circle, ${colors.grabRgba(0.25)} 0%, transparent 70%)`,
+            opacity: 0.9,
+        },
+        hidden: {
+            width: 0,
+            height: 0,
+            background: 'transparent',
+            opacity: 0,
+        },
+    };
 };
 
 // Trail particle component (memoized for performance)
@@ -228,9 +254,10 @@ interface TrailParticle {
     timestamp: number;
 }
 
-const TrailDot = memo(({ particle, age }: { particle: TrailParticle; age: number }) => {
+const TrailDot = memo(({ particle, age, isDark }: { particle: TrailParticle; age: number; isDark: boolean }) => {
     const opacity = Math.max(0, 1 - age / 300); // Fade over 300ms
     const scale = Math.max(0, 1 - age / 400);
+    const colors = getThemeColors(isDark);
     
     if (opacity <= 0) return null;
     
@@ -240,8 +267,8 @@ const TrailDot = memo(({ particle, age }: { particle: TrailParticle; age: number
             style={{
                 width: 4,
                 height: 4,
-                backgroundColor: 'rgba(0, 255, 136, 0.6)',
-                boxShadow: '0 0 6px rgba(0, 255, 136, 0.5)',
+                backgroundColor: colors.primaryRgba(0.6),
+                boxShadow: `0 0 6px ${colors.primaryRgba(0.5)}`,
                 left: particle.x,
                 top: particle.y,
                 transform: `translate(-50%, -50%) rotate(45deg) scale(${scale})`,
@@ -255,6 +282,9 @@ const TrailDot = memo(({ particle, age }: { particle: TrailParticle; age: number
 TrailDot.displayName = 'TrailDot';
 
 function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
+    const { resolvedAppearance } = useAppearance();
+    const isDark = resolvedAppearance === 'dark';
+    
     const [cursorState, setCursorState] = useState<CursorState>('default');
     const [isTouch, setIsTouch] = useState(false);
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -374,9 +404,15 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
     // Don't render on touch devices or when disabled
     if (!enabled || isTouch || prefersReducedMotion) return null;
     
-    const dotStyle = DOT_STYLES[cursorState];
-    const ringStyle = RING_STYLES[cursorState];
-    const glowStyle = GLOW_STYLES[cursorState];
+    // Get theme-aware styles
+    const dotStyles = getDotStyles(isDark);
+    const ringStyles = getRingStyles(isDark);
+    const glowStyles = getGlowStyles(isDark);
+    const colors = getThemeColors(isDark);
+    
+    const dotStyle = dotStyles[cursorState];
+    const ringStyle = ringStyles[cursorState];
+    const glowStyle = glowStyles[cursorState];
     
     return (
         <div 
@@ -388,7 +424,8 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
                 <TrailDot 
                     key={particle.id} 
                     particle={particle} 
-                    age={now - particle.timestamp} 
+                    age={now - particle.timestamp}
+                    isDark={isDark}
                 />
             ))}
             
@@ -425,8 +462,8 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
                 style={{
                     width: CURSOR_CONFIG.crossLength,
                     height: 1,
-                    backgroundColor: cursorState === 'hidden' ? 'transparent' : 'rgba(0, 255, 136, 0.6)',
-                    boxShadow: '0 0 4px rgba(0, 255, 136, 0.4)',
+                    backgroundColor: cursorState === 'hidden' ? 'transparent' : colors.primaryRgba(0.6),
+                    boxShadow: `0 0 4px ${colors.primaryRgba(0.4)}`,
                     left: position.x - CURSOR_CONFIG.crossLength / 2 - 8,
                     top: position.y - 0.5,
                     opacity: cursorState === 'text' ? 0 : 0.8,
@@ -439,8 +476,8 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
                 style={{
                     width: CURSOR_CONFIG.crossLength,
                     height: 1,
-                    backgroundColor: cursorState === 'hidden' ? 'transparent' : 'rgba(0, 255, 136, 0.6)',
-                    boxShadow: '0 0 4px rgba(0, 255, 136, 0.4)',
+                    backgroundColor: cursorState === 'hidden' ? 'transparent' : colors.primaryRgba(0.6),
+                    boxShadow: `0 0 4px ${colors.primaryRgba(0.4)}`,
                     left: position.x + 8,
                     top: position.y - 0.5,
                     opacity: cursorState === 'text' ? 0 : 0.8,
@@ -455,8 +492,8 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
                 style={{
                     width: 1,
                     height: CURSOR_CONFIG.crossLength,
-                    backgroundColor: cursorState === 'hidden' ? 'transparent' : 'rgba(0, 255, 136, 0.6)',
-                    boxShadow: '0 0 4px rgba(0, 255, 136, 0.4)',
+                    backgroundColor: cursorState === 'hidden' ? 'transparent' : colors.primaryRgba(0.6),
+                    boxShadow: `0 0 4px ${colors.primaryRgba(0.4)}`,
                     left: position.x - 0.5,
                     top: position.y - CURSOR_CONFIG.crossLength / 2 - 8,
                     opacity: cursorState === 'text' ? 0 : 0.8,
@@ -469,8 +506,8 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
                 style={{
                     width: 1,
                     height: CURSOR_CONFIG.crossLength,
-                    backgroundColor: cursorState === 'hidden' ? 'transparent' : 'rgba(0, 255, 136, 0.6)',
-                    boxShadow: '0 0 4px rgba(0, 255, 136, 0.4)',
+                    backgroundColor: cursorState === 'hidden' ? 'transparent' : colors.primaryRgba(0.6),
+                    boxShadow: `0 0 4px ${colors.primaryRgba(0.4)}`,
                     left: position.x - 0.5,
                     top: position.y + 8,
                     opacity: cursorState === 'text' ? 0 : 0.8,
@@ -498,8 +535,8 @@ function AnimatedCursor({ enabled = true }: AnimatedCursorProps) {
                 style={{
                     width: 2,
                     height: 2,
-                    backgroundColor: 'rgb(0, 255, 136)',
-                    boxShadow: '0 0 4px rgb(0, 255, 136)',
+                    backgroundColor: colors.primary,
+                    boxShadow: `0 0 4px ${colors.primary}`,
                     left: position.x,
                     top: position.y,
                     transform: 'translate(-50%, -50%)',

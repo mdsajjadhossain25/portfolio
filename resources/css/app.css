@@ -79,49 +79,49 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
+    --background: oklch(0.98 0.005 240);
+    --foreground: oklch(0.2 0.02 260);
+    --card: oklch(0.99 0.003 240);
+    --card-foreground: oklch(0.2 0.02 260);
+    --popover: oklch(0.99 0.003 240);
+    --popover-foreground: oklch(0.2 0.02 260);
+    --primary: oklch(0.55 0.18 195);
     --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
+    --secondary: oklch(0.94 0.01 240);
+    --secondary-foreground: oklch(0.3 0.02 260);
+    --muted: oklch(0.95 0.008 240);
+    --muted-foreground: oklch(0.45 0.03 260);
+    --accent: oklch(0.92 0.015 280);
+    --accent-foreground: oklch(0.25 0.02 260);
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.98 0.01 25);
+    --border: oklch(0.88 0.015 260);
+    --input: oklch(0.92 0.01 260);
+    --ring: oklch(0.6 0.15 195);
+    --chart-1: oklch(0.55 0.2 195);
+    --chart-2: oklch(0.5 0.18 300);
+    --chart-3: oklch(0.45 0.15 330);
+    --chart-4: oklch(0.6 0.2 140);
+    --chart-5: oklch(0.55 0.18 30);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar: oklch(0.97 0.008 240);
+    --sidebar-foreground: oklch(0.2 0.02 260);
+    --sidebar-primary: oklch(0.55 0.18 195);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --sidebar-accent: oklch(0.93 0.012 280);
+    --sidebar-accent-foreground: oklch(0.25 0.02 260);
+    --sidebar-border: oklch(0.88 0.015 260);
+    --sidebar-ring: oklch(0.6 0.15 195);
     
-    /* Futuristic Neon Colors - Light Mode */
-    --neon-cyan: #00f5ff;
-    --neon-purple: #bf00ff;
-    --neon-pink: #ff00a8;
-    --neon-green: #39ff14;
-    --neon-orange: #ff6b00;
-    --cyber-blue: #0099ff;
-    --cyber-dark: #0a0a0f;
-    --cyber-darker: #050508;
+    /* Futuristic Neon Colors - Light Mode (Muted but visible) */
+    --neon-cyan: #0891b2;
+    --neon-purple: #9333ea;
+    --neon-pink: #db2777;
+    --neon-green: #16a34a;
+    --neon-orange: #ea580c;
+    --cyber-blue: #0284c7;
+    --cyber-dark: #f8fafc;
+    --cyber-darker: #f1f5f9;
 }
 
 .dark {
@@ -196,8 +196,14 @@
     font-family: 'Share Tech Mono', 'Fira Code', 'Consolas', monospace;
 }
 
-/* Neon Glow Effects */
+/* Neon Glow Effects - Theme Aware */
 .glow-cyan {
+    text-shadow: 
+        0 0 3px var(--neon-cyan),
+        0 0 6px var(--neon-cyan);
+}
+
+.dark .glow-cyan {
     text-shadow: 
         0 0 5px var(--neon-cyan),
         0 0 10px var(--neon-cyan),
@@ -207,6 +213,12 @@
 
 .glow-purple {
     text-shadow: 
+        0 0 3px var(--neon-purple),
+        0 0 6px var(--neon-purple);
+}
+
+.dark .glow-purple {
+    text-shadow: 
         0 0 5px var(--neon-purple),
         0 0 10px var(--neon-purple),
         0 0 20px var(--neon-purple),
@@ -215,14 +227,26 @@
 
 .glow-pink {
     text-shadow: 
+        0 0 3px var(--neon-pink),
+        0 0 6px var(--neon-pink);
+}
+
+.dark .glow-pink {
+    text-shadow: 
         0 0 5px var(--neon-pink),
         0 0 10px var(--neon-pink),
         0 0 20px var(--neon-pink),
         0 0 40px var(--neon-pink);
 }
 
-/* Box Glow Effects */
+/* Box Glow Effects - Theme Aware */
 .box-glow-cyan {
+    box-shadow: 
+        0 0 3px var(--neon-cyan),
+        0 0 6px rgba(8, 145, 178, 0.3);
+}
+
+.dark .box-glow-cyan {
     box-shadow: 
         0 0 5px var(--neon-cyan),
         0 0 10px rgba(0, 245, 255, 0.5),
@@ -232,24 +256,40 @@
 
 .box-glow-purple {
     box-shadow: 
+        0 0 3px var(--neon-purple),
+        0 0 6px rgba(147, 51, 234, 0.3);
+}
+
+.dark .box-glow-purple {
+    box-shadow: 
         0 0 5px var(--neon-purple),
         0 0 10px rgba(191, 0, 255, 0.5),
         0 0 20px rgba(191, 0, 255, 0.3),
         inset 0 0 10px rgba(191, 0, 255, 0.1);
 }
 
-/* Glassmorphism */
+/* Glassmorphism - Theme Aware */
 .glass {
-    background: rgba(10, 10, 15, 0.7);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(8, 145, 178, 0.2);
+}
+
+.dark .glass {
+    background: rgba(10, 10, 15, 0.7);
     border: 1px solid rgba(0, 245, 255, 0.15);
 }
 
 .glass-light {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-light {
+    background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -298,19 +338,36 @@
         0deg,
         transparent,
         transparent 2px,
+        rgba(0, 0, 0, 0.05) 2px,
+        rgba(0, 0, 0, 0.05) 4px
+    );
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+.dark .scanlines::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
         rgba(0, 0, 0, 0.1) 2px,
         rgba(0, 0, 0, 0.1) 4px
     );
-    pointer-events: none;
     opacity: 0.3;
 }
 
-/* Cyber Grid Background */
+/* Cyber Grid Background - Theme Aware */
 .cyber-grid {
+    background-image: 
+        linear-gradient(rgba(8, 145, 178, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(8, 145, 178, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+.dark .cyber-grid {
     background-image: 
         linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
 }
 
 /* HUD Corner Decorations */
@@ -414,7 +471,7 @@
     color: var(--neon-cyan);
 }
 
-/* Data Stream Effect */
+/* Data Stream Effect - Theme Aware */
 @keyframes dataStream {
     0% {
         background-position: 0% 0%;
@@ -428,11 +485,20 @@
     background: linear-gradient(
         180deg,
         transparent 0%,
-        rgba(0, 245, 255, 0.1) 50%,
+        rgba(8, 145, 178, 0.08) 50%,
         transparent 100%
     );
     background-size: 100% 200%;
     animation: dataStream 2s linear infinite;
+}
+
+.dark .data-stream {
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(0, 245, 255, 0.1) 50%,
+        transparent 100%
+    );
 }
 
 /* Hide scrollbar but keep functionality */
@@ -445,12 +511,16 @@
     display: none;
 }
 
-/* Custom Scrollbar (Futuristic) */
+/* Custom Scrollbar (Futuristic) - Theme Aware */
 .scrollbar-cyber::-webkit-scrollbar {
     width: 8px;
 }
 
 .scrollbar-cyber::-webkit-scrollbar-track {
+    background: rgba(241, 245, 249, 0.8);
+}
+
+.dark .scrollbar-cyber::-webkit-scrollbar-track {
     background: rgba(10, 10, 15, 0.5);
 }
 
@@ -463,15 +533,27 @@
     background: linear-gradient(180deg, var(--neon-purple), var(--neon-pink));
 }
 
-/* Selection Color */
+/* Selection Color - Theme Aware */
 ::selection {
+    background: rgba(8, 145, 178, 0.25);
+    color: #0f172a;
+}
+
+.dark ::selection {
     background: rgba(0, 245, 255, 0.3);
     color: #fff;
 }
 
-/* Focus States */
+/* Focus States - Theme Aware */
 .focus-ring-cyber:focus {
     outline: none;
+    box-shadow: 
+        0 0 0 2px var(--background),
+        0 0 0 4px var(--neon-cyan),
+        0 0 15px rgba(8, 145, 178, 0.3);
+}
+
+.dark .focus-ring-cyber:focus {
     box-shadow: 
         0 0 0 2px var(--cyber-dark),
         0 0 0 4px var(--neon-cyan),

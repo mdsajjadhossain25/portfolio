@@ -38,7 +38,7 @@ export default function TagForm({ tag }: Props) {
         e.preventDefault();
         
         if (tag) {
-            put(`/admin/blog/tags/${tag.slug}`);
+            put(`/admin/blog/tags/${tag.id}`);
         } else {
             post('/admin/blog/tags');
         }

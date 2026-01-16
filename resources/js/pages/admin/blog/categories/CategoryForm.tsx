@@ -42,7 +42,7 @@ export default function CategoryForm({ category }: Props) {
         e.preventDefault();
         
         if (category) {
-            put(`/admin/blog/categories/${category.slug}`);
+            put(`/admin/blog/categories/${category.id}`);
         } else {
             post('/admin/blog/categories');
         }

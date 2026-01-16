@@ -69,18 +69,18 @@ export function Footer() {
     return (
         <footer className="relative mt-20 overflow-hidden">
             {/* Top gradient line */}
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-600/50 dark:via-cyan-500/50 to-transparent" />
             
             {/* Background */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/95 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-100 via-gray-50/95 to-transparent dark:from-black dark:via-black/95" />
             
             {/* Grid pattern */}
             <div 
-                className="absolute inset-0 opacity-[0.02]"
+                className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
                 style={{
                     backgroundImage: `
-                        linear-gradient(rgba(0,255,255,0.3) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0,255,255,0.3) 1px, transparent 1px)
+                        linear-gradient(rgba(8,145,178,0.3) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(8,145,178,0.3) 1px, transparent 1px)
                     `,
                     backgroundSize: '50px 50px',
                 }}
@@ -105,18 +105,18 @@ export function Footer() {
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
                                 />
-                                <div className="absolute inset-[2px] bg-black rounded-lg flex items-center justify-center">
-                                    <span className="text-cyan-400 font-bold text-xl font-mono">S</span>
+                                <div className="absolute inset-[2px] bg-white dark:bg-black rounded-lg flex items-center justify-center">
+                                    <span className="text-cyan-600 dark:text-cyan-400 font-bold text-xl font-mono">S</span>
                                 </div>
                             </div>
                             <div>
-                                <span className="text-white font-bold text-xl tracking-wider">SAJJAD</span>
-                                <span className="text-cyan-400 font-bold text-xl">.</span>
-                                <span className="text-cyan-400/70 text-sm font-mono ml-1">CODES</span>
+                                <span className="text-gray-900 dark:text-white font-bold text-xl tracking-wider">SAJJAD</span>
+                                <span className="text-cyan-600 dark:text-cyan-400 font-bold text-xl">.</span>
+                                <span className="text-cyan-600/70 dark:text-cyan-400/70 text-sm font-mono ml-1">CODES</span>
                             </div>
                         </div>
                         
-                        <p className="text-white/60 text-sm leading-relaxed max-w-md mb-6">
+                        <p className="text-gray-600 dark:text-white/60 text-sm leading-relaxed max-w-md mb-6">
                             Building next-generation digital experiences with cutting-edge technology.
                             Specializing in full-stack development, UI/UX design, and creative solutions.
                         </p>
@@ -130,8 +130,8 @@ export function Footer() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="group relative w-10 h-10 flex items-center justify-center
-                                               bg-white/5 border border-white/10 rounded-lg
-                                               text-white/60 hover:text-cyan-400 hover:border-cyan-500/50
+                                               bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg
+                                               text-gray-600 dark:text-white/60 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/50
                                                transition-all duration-300"
                                     initial={{ opacity: 0, scale: 0 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
@@ -156,8 +156,8 @@ export function Footer() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.2, duration: 0.5 }}
                     >
-                        <h3 className="text-cyan-400 font-mono font-semibold uppercase tracking-wider text-sm mb-4 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(0,255,255,0.5)]" />
+                        <h3 className="text-cyan-600 dark:text-cyan-400 font-mono font-semibold uppercase tracking-wider text-sm mb-4 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-cyan-600 dark:bg-cyan-400 shadow-[0_0_10px_rgba(8,145,178,0.5)] dark:shadow-[0_0_10px_rgba(0,255,255,0.5)]" />
                             Navigation
                         </h3>
                         <ul className="space-y-2">
@@ -165,10 +165,10 @@ export function Footer() {
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-white/60 hover:text-cyan-400 text-sm transition-colors duration-300
+                                        className="text-gray-600 dark:text-white/60 hover:text-cyan-600 dark:hover:text-cyan-400 text-sm transition-colors duration-300
                                                    flex items-center gap-2 group"
                                     >
-                                        <span className="w-1 h-1 rounded-full bg-white/30 group-hover:bg-cyan-400 transition-colors" />
+                                        <span className="w-1 h-1 rounded-full bg-gray-400 dark:bg-white/30 group-hover:bg-cyan-600 dark:group-hover:bg-cyan-400 transition-colors" />
                                         {link.label}
                                     </Link>
                                 </li>
@@ -183,21 +183,21 @@ export function Footer() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.3, duration: 0.5 }}
                     >
-                        <h3 className="text-cyan-400 font-mono font-semibold uppercase tracking-wider text-sm mb-4 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(0,255,255,0.5)]" />
+                        <h3 className="text-cyan-600 dark:text-cyan-400 font-mono font-semibold uppercase tracking-wider text-sm mb-4 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-cyan-600 dark:bg-cyan-400 shadow-[0_0_10px_rgba(8,145,178,0.5)] dark:shadow-[0_0_10px_rgba(0,255,255,0.5)]" />
                             Contact
                         </h3>
                         <ul className="space-y-3">
-                            <li className="text-white/60 text-sm flex items-start gap-2">
-                                <span className="text-cyan-400/70 mt-0.5">→</span>
+                            <li className="text-gray-600 dark:text-white/60 text-sm flex items-start gap-2">
+                                <span className="text-cyan-600/70 dark:text-cyan-400/70 mt-0.5">→</span>
                                 <span>hello@example.com</span>
                             </li>
-                            <li className="text-white/60 text-sm flex items-start gap-2">
-                                <span className="text-cyan-400/70 mt-0.5">→</span>
+                            <li className="text-gray-600 dark:text-white/60 text-sm flex items-start gap-2">
+                                <span className="text-cyan-600/70 dark:text-cyan-400/70 mt-0.5">→</span>
                                 <span>Available for freelance</span>
                             </li>
-                            <li className="text-white/60 text-sm flex items-start gap-2">
-                                <span className="text-cyan-400/70 mt-0.5">→</span>
+                            <li className="text-gray-600 dark:text-white/60 text-sm flex items-start gap-2">
+                                <span className="text-cyan-600/70 dark:text-cyan-400/70 mt-0.5">→</span>
                                 <span>Remote / Worldwide</span>
                             </li>
                         </ul>
@@ -209,14 +209,14 @@ export function Footer() {
                                 animate={{ scale: [1, 1.3, 1] }}
                                 transition={{ duration: 2, repeat: Infinity }}
                             />
-                            <span className="text-green-400 text-xs font-mono uppercase">Available for work</span>
+                            <span className="text-green-600 dark:text-green-400 text-xs font-mono uppercase">Available for work</span>
                         </div>
                     </motion.div>
                 </div>
                 
                 {/* Bottom bar */}
                 <motion.div
-                    className="pt-8 border-t border-white/10"
+                    className="pt-8 border-t border-gray-200 dark:border-white/10"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -224,24 +224,24 @@ export function Footer() {
                 >
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         {/* Copyright */}
-                        <p className="text-white/40 text-sm font-mono">
-                            © {currentYear} <span className="text-cyan-400/70">SAJJAD.CODES</span>. All rights reserved.
+                        <p className="text-gray-500 dark:text-white/40 text-sm font-mono">
+                            © {currentYear} <span className="text-cyan-600/70 dark:text-cyan-400/70">SAJJAD.CODES</span>. All rights reserved.
                         </p>
                         
                         {/* Tech stack badge */}
-                        <div className="flex items-center gap-2 text-white/30 text-xs font-mono">
+                        <div className="flex items-center gap-2 text-gray-400 dark:text-white/30 text-xs font-mono">
                             <span>Built with</span>
-                            <span className="text-cyan-400/70">React</span>
+                            <span className="text-cyan-600/70 dark:text-cyan-400/70">React</span>
                             <span>+</span>
-                            <span className="text-purple-400/70">Laravel</span>
+                            <span className="text-purple-600/70 dark:text-purple-400/70">Laravel</span>
                             <span>+</span>
-                            <span className="text-pink-400/70">Inertia</span>
+                            <span className="text-pink-600/70 dark:text-pink-400/70">Inertia</span>
                         </div>
                         
                         {/* System status */}
-                        <div className="flex items-center gap-3 text-xs font-mono text-white/30">
+                        <div className="flex items-center gap-3 text-xs font-mono text-gray-400 dark:text-white/30">
                             <span>SYS: ONLINE</span>
-                            <span className="w-1 h-1 rounded-full bg-white/30" />
+                            <span className="w-1 h-1 rounded-full bg-gray-400 dark:bg-white/30" />
                             <span>v1.0.0</span>
                         </div>
                     </div>
@@ -252,19 +252,19 @@ export function Footer() {
             <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none">
                 {/* Scan line */}
                 <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"
+                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-600/30 dark:via-cyan-500/30 to-transparent"
                     animate={{ opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 3, repeat: Infinity }}
                 />
                 
                 {/* Corner accents */}
                 <div className="absolute bottom-4 left-4 w-8 h-8">
-                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-500/50 to-transparent" />
-                    <div className="absolute bottom-0 left-0 w-[1px] h-full bg-gradient-to-t from-cyan-500/50 to-transparent" />
+                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-600/50 dark:from-cyan-500/50 to-transparent" />
+                    <div className="absolute bottom-0 left-0 w-[1px] h-full bg-gradient-to-t from-cyan-600/50 dark:from-cyan-500/50 to-transparent" />
                 </div>
                 <div className="absolute bottom-4 right-4 w-8 h-8">
-                    <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-cyan-500/50 to-transparent" />
-                    <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-cyan-500/50 to-transparent" />
+                    <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-cyan-600/50 dark:from-cyan-500/50 to-transparent" />
+                    <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-cyan-600/50 dark:from-cyan-500/50 to-transparent" />
                 </div>
             </div>
         </footer>

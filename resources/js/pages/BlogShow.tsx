@@ -77,24 +77,24 @@ function ContentRenderer({ content }: { content: string }) {
         // This is a simplified renderer - in production, use a proper Markdown library
         let html = text
             // Code blocks
-            .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-neutral-900 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm text-cyan-400">$2</code></pre>')
+            .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-neutral-100 dark:bg-neutral-900 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm text-cyan-600 dark:text-cyan-400">$2</code></pre>')
             // Inline code
-            .replace(/`([^`]+)`/g, '<code class="bg-neutral-800 px-1.5 py-0.5 rounded text-cyan-400 text-sm">$1</code>')
+            .replace(/`([^`]+)`/g, '<code class="bg-neutral-200 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-cyan-600 dark:text-cyan-400 text-sm">$1</code>')
             // Headers
-            .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-white mt-8 mb-4">$1</h3>')
-            .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-white mt-10 mb-4">$1</h2>')
-            .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-white mt-12 mb-6">$1</h1>')
+            .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-neutral-900 dark:text-white mt-8 mb-4">$1</h3>')
+            .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-neutral-900 dark:text-white mt-10 mb-4">$1</h2>')
+            .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-neutral-900 dark:text-white mt-12 mb-6">$1</h1>')
             // Bold
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-neutral-900 dark:text-white">$1</strong>')
             // Italic
             .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
             // Links
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-cyan-400 hover:text-cyan-300 underline" target="_blank" rel="noopener">$1</a>')
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 underline" target="_blank" rel="noopener">$1</a>')
             // Lists
             .replace(/^\- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
             .replace(/^\d+\. (.*$)/gim, '<li class="ml-4 list-decimal">$1</li>')
             // Blockquotes
-            .replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-cyan-500 pl-4 my-4 text-neutral-400 italic">$1</blockquote>')
+            .replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-cyan-500 pl-4 my-4 text-neutral-500 dark:text-neutral-400 italic">$1</blockquote>')
             // Paragraphs
             .replace(/\n\n/g, '</p><p class="mb-4 leading-relaxed">')
             // Line breaks
@@ -105,7 +105,7 @@ function ContentRenderer({ content }: { content: string }) {
 
     return (
         <div 
-            className="prose prose-invert prose-lg max-w-none text-neutral-300"
+            className="prose prose-lg dark:prose-invert max-w-none text-neutral-700 dark:text-neutral-300 prose-headings:text-neutral-900 dark:prose-headings:text-white"
             dangerouslySetInnerHTML={{ __html: renderContent(content) }}
         />
     );
@@ -164,14 +164,14 @@ function CommentForm({ postId }: { postId: number }) {
                 animate={{ opacity: 1, y: 0 }}
                 className="rounded-xl border border-green-500/30 bg-green-500/10 p-6 text-center"
             >
-                <svg className="mx-auto h-12 w-12 text-green-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="mx-auto h-12 w-12 text-green-500 dark:text-green-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h4 className="font-medium text-white mb-1">Thank you!</h4>
-                <p className="text-sm text-neutral-400">Your comment has been submitted and is pending approval.</p>
+                <h4 className="font-medium text-neutral-900 dark:text-white mb-1">Thank you!</h4>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">Your comment has been submitted and is pending approval.</p>
                 <button
                     onClick={() => setSubmitted(false)}
-                    className="mt-4 text-cyan-400 text-sm hover:text-cyan-300"
+                    className="mt-4 text-cyan-600 dark:text-cyan-400 text-sm hover:text-cyan-500 dark:hover:text-cyan-300"
                 >
                     Submit another comment
                 </button>
@@ -199,11 +199,11 @@ function CommentForm({ postId }: { postId: number }) {
                         value={data.user_name}
                         onChange={(e) => setData('user_name', e.target.value)}
                         placeholder="Your name *"
-                        className="w-full rounded-lg border border-neutral-800 bg-black/50 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none"
+                        className="w-full rounded-lg border border-neutral-300 dark:border-neutral-800 bg-white/50 dark:bg-black/50 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none"
                         required
                     />
                     {errors.user_name && (
-                        <p className="mt-1 text-sm text-red-400">{errors.user_name}</p>
+                        <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.user_name}</p>
                     )}
                 </div>
                 <div>
@@ -212,11 +212,11 @@ function CommentForm({ postId }: { postId: number }) {
                         value={data.user_email}
                         onChange={(e) => setData('user_email', e.target.value)}
                         placeholder="Your email *"
-                        className="w-full rounded-lg border border-neutral-800 bg-black/50 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none"
+                        className="w-full rounded-lg border border-neutral-300 dark:border-neutral-800 bg-white/50 dark:bg-black/50 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none"
                         required
                     />
                     {errors.user_email && (
-                        <p className="mt-1 text-sm text-red-400">{errors.user_email}</p>
+                        <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.user_email}</p>
                     )}
                 </div>
             </div>
@@ -227,13 +227,13 @@ function CommentForm({ postId }: { postId: number }) {
                     onChange={(e) => setData('comment_body', e.target.value)}
                     placeholder="Your comment *"
                     rows={4}
-                    className="w-full rounded-lg border border-neutral-800 bg-black/50 px-4 py-3 text-sm text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none resize-none"
+                    className="w-full rounded-lg border border-neutral-300 dark:border-neutral-800 bg-white/50 dark:bg-black/50 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none resize-none"
                     required
                     minLength={5}
                     maxLength={2000}
                 />
                 {errors.comment_body && (
-                    <p className="mt-1 text-sm text-red-400">{errors.comment_body}</p>
+                    <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.comment_body}</p>
                 )}
             </div>
 
@@ -253,10 +253,10 @@ function RelatedPostCard({ post }: { post: RelatedPost }) {
     return (
         <Link href={`/blog/${post.slug}`}>
             <motion.div
-                className="group rounded-xl border border-neutral-800 bg-neutral-900/50 overflow-hidden hover:border-cyan-500/50 transition-colors"
+                className="group rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 overflow-hidden hover:border-cyan-500/50 transition-colors"
                 whileHover={{ y: -5 }}
             >
-                <div className="aspect-[16/9] overflow-hidden bg-neutral-900">
+                <div className="aspect-[16/9] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
                     {post.cover_url ? (
                         <img
                             src={post.cover_url}
@@ -264,15 +264,15 @@ function RelatedPostCard({ post }: { post: RelatedPost }) {
                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-900">
-                            <svg className="h-8 w-8 text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-200 dark:from-neutral-800 to-neutral-300 dark:to-neutral-900">
+                            <svg className="h-8 w-8 text-neutral-400 dark:text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                             </svg>
                         </div>
                     )}
                 </div>
                 <div className="p-4">
-                    <h4 className="font-medium text-white group-hover:text-cyan-400 transition-colors line-clamp-2">
+                    <h4 className="font-medium text-neutral-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-2">
                         {post.title}
                     </h4>
                     <p className="mt-2 text-xs text-neutral-500">
@@ -309,7 +309,7 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                     >
                         <Link
                             href="/blog"
-                            className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-cyan-400 transition-colors"
+                            className="inline-flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
                         >
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -340,12 +340,12 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                             </div>
                         )}
 
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight">
                             {post.title}
                         </h1>
 
                         {/* Meta */}
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-400">
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
                             <span className="flex items-center gap-2">
                                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-white font-medium">
                                     {post.author_name.charAt(0)}
@@ -399,7 +399,7 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                                 <Link
                                     key={tag.slug}
                                     href={`/blog?tag=${tag.slug}`}
-                                    className="rounded-full bg-neutral-800 px-3 py-1 text-xs text-neutral-400 hover:bg-neutral-700 hover:text-white transition-colors"
+                                    className="rounded-full bg-neutral-200 dark:bg-neutral-800 px-3 py-1 text-xs text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white transition-colors"
                                 >
                                     #{tag.name}
                                 </Link>
@@ -412,9 +412,9 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
-                        className="mb-12 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6"
+                        className="mb-12 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 p-6"
                     >
-                        <h3 className="text-sm font-medium text-neutral-400 mb-4">Share this article</h3>
+                        <h3 className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-4">Share this article</h3>
                         <div className="flex flex-wrap gap-3">
                             <ShareButton
                                 href={post.twitter_share_url}
@@ -456,13 +456,13 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                         transition={{ delay: 0.6 }}
                         className="mb-12"
                     >
-                        <h2 className="text-2xl font-bold text-white mb-6">
+                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
                             Comments ({post.comments_count})
                         </h2>
 
                         {/* Comment Form */}
-                        <div className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6">
-                            <h3 className="font-medium text-white mb-4">Leave a comment</h3>
+                        <div className="mb-8 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 p-6">
+                            <h3 className="font-medium text-neutral-900 dark:text-white mb-4">Leave a comment</h3>
                             <CommentForm postId={post.id} />
                         </div>
 
@@ -472,23 +472,23 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                                 {post.comments.map((comment) => (
                                     <div
                                         key={comment.id}
-                                        className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5"
+                                        className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/30 p-5"
                                     >
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white text-sm font-medium">
                                                 {comment.user_name.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <span className="font-medium text-white">{comment.user_name}</span>
+                                                <span className="font-medium text-neutral-900 dark:text-white">{comment.user_name}</span>
                                                 <span className="text-xs text-neutral-500 ml-2">{comment.time_ago}</span>
                                             </div>
                                         </div>
-                                        <p className="text-neutral-300 text-sm leading-relaxed">{comment.comment_body}</p>
+                                        <p className="text-neutral-700 dark:text-neutral-300 text-sm leading-relaxed">{comment.comment_body}</p>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-neutral-500 text-center py-8">
+                            <p className="text-neutral-500 dark:text-neutral-500 text-center py-8">
                                 No comments yet. Be the first to share your thoughts!
                             </p>
                         )}
@@ -501,7 +501,7 @@ export default function BlogShow({ post, relatedPosts }: Props) {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.7 }}
                         >
-                            <h2 className="text-2xl font-bold text-white mb-6">Related Articles</h2>
+                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Related Articles</h2>
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 {relatedPosts.map((relatedPost) => (
                                     <RelatedPostCard key={relatedPost.id} post={relatedPost} />

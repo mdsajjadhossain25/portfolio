@@ -113,16 +113,16 @@ export default function Services({ featuredServices, regularServices, allService
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                        <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                             // AI Solutions
                         </span>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-4 mb-6">
                             AI Services &{' '}
-                            <GlitchText as="span" className="text-purple-400">
+                            <GlitchText as="span" className="text-purple-600 dark:text-purple-400">
                                 Consulting
                             </GlitchText>
                         </h1>
-                        <p className="text-white/50 text-lg max-w-2xl mx-auto">
+                        <p className="text-gray-600 dark:text-white/50 text-lg max-w-2xl mx-auto">
                             From computer vision prototypes to production LLM systems. 
                             Technical AI solutions built for real-world deployment.
                         </p>
@@ -203,12 +203,12 @@ export default function Services({ featuredServices, regularServices, allService
                                                 </div>
                                             )}
                                             
-                                            <p className="text-white/60 text-sm mb-6 leading-relaxed">
+                                            <p className="text-gray-600 dark:text-white/60 text-sm mb-6 leading-relaxed">
                                                 {service.short_description}
                                             </p>
                                             
                                             {service.duration && (
-                                                <div className="flex items-center gap-2 text-white/50 text-xs mb-4">
+                                                <div className="flex items-center gap-2 text-gray-500 dark:text-white/50 text-xs mb-4">
                                                     <Clock className="w-3 h-3" />
                                                     <span>{service.duration}</span>
                                                 </div>
@@ -218,18 +218,18 @@ export default function Services({ featuredServices, regularServices, allService
                                                 {service.features.slice(0, 5).map((feature, i) => (
                                                     <motion.li
                                                         key={feature.id}
-                                                        className="flex items-center gap-2 text-white/70 text-sm"
+                                                        className="flex items-center gap-2 text-gray-700 dark:text-white/70 text-sm"
                                                         initial={{ opacity: 0, x: -10 }}
                                                         whileInView={{ opacity: 1, x: 0 }}
                                                         viewport={{ once: true }}
                                                         transition={{ delay: 0.3 + i * 0.05 }}
                                                     >
-                                                        <Check className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                                                        <Check className="w-4 h-4 text-cyan-600 dark:text-cyan-400 flex-shrink-0" />
                                                         {feature.feature_text}
                                                     </motion.li>
                                                 ))}
                                                 {service.features.length > 5 && (
-                                                    <li className="text-white/50 text-xs pl-6">
+                                                    <li className="text-gray-500 dark:text-white/50 text-xs pl-6">
                                                         +{service.features.length - 5} more features
                                                     </li>
                                                 )}
@@ -261,8 +261,8 @@ export default function Services({ featuredServices, regularServices, allService
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <h2 className="text-2xl sm:text-3xl font-bold text-white">
-                                    All <GlitchText as="span" className="text-cyan-400">Services</GlitchText>
+                                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                                    All <GlitchText as="span" className="text-cyan-600 dark:text-cyan-400">Services</GlitchText>
                                 </h2>
                             </motion.div>
                             
@@ -288,21 +288,21 @@ export default function Services({ featuredServices, regularServices, allService
                                                     <ServiceIcon icon={service.icon} serviceType={service.service_type} />
                                                 </div>
                                                 {service.price_label && (
-                                                    <span className="text-sm font-medium text-white/80">
+                                                    <span className="text-sm font-medium text-gray-700 dark:text-white/80">
                                                         {service.price_label}
                                                     </span>
                                                 )}
                                             </div>
                                             
-                                            <h3 className="text-white font-semibold text-lg mb-2">
+                                            <h3 className="text-gray-900 dark:text-white font-semibold text-lg mb-2">
                                                 {service.title}
                                             </h3>
                                             
-                                            <span className="inline-block px-2 py-0.5 mb-3 text-xs rounded-full bg-white/10 text-white/60">
+                                            <span className="inline-block px-2 py-0.5 mb-3 text-xs rounded-full bg-gray-100/80 dark:bg-white/10 text-gray-600 dark:text-white/60">
                                                 {service.service_type_label}
                                             </span>
                                             
-                                            <p className="text-white/50 text-sm mb-4 line-clamp-2">
+                                            <p className="text-gray-600 dark:text-white/50 text-sm mb-4 line-clamp-2">
                                                 {service.short_description}
                                             </p>
                                             
@@ -311,9 +311,9 @@ export default function Services({ featuredServices, regularServices, allService
                                                     {service.features.slice(0, 3).map((feature) => (
                                                         <li 
                                                             key={feature.id}
-                                                            className="flex items-center gap-2 text-white/60 text-xs"
+                                                            className="flex items-center gap-2 text-gray-600 dark:text-white/60 text-xs"
                                                         >
-                                                            <span className="w-1 h-1 rounded-full bg-cyan-400" />
+                                                            <span className="w-1 h-1 rounded-full bg-cyan-600 dark:bg-cyan-400" />
                                                             <span className="line-clamp-1">{feature.feature_text}</span>
                                                         </li>
                                                     ))}
@@ -322,7 +322,7 @@ export default function Services({ featuredServices, regularServices, allService
                                             
                                             <Link 
                                                 href="/contact" 
-                                                className="inline-flex items-center gap-2 text-cyan-400 text-sm hover:text-cyan-300 transition-colors"
+                                                className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 text-sm hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors"
                                             >
                                                 Learn More
                                                 <ArrowRight className="w-4 h-4" />
@@ -347,11 +347,11 @@ export default function Services({ featuredServices, regularServices, allService
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                        <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                             // ML Pipeline
                         </span>
-                        <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
-                            My <GlitchText as="span" className="text-purple-400">Process</GlitchText>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mt-4">
+                            My <GlitchText as="span" className="text-purple-600 dark:text-purple-400">Process</GlitchText>
                         </h2>
                     </motion.div>
                     
@@ -375,8 +375,8 @@ export default function Services({ featuredServices, regularServices, allService
                                     <span className="text-5xl font-bold text-cyan-500/20 mb-4 block font-mono">
                                         {step.number}
                                     </span>
-                                    <h3 className="text-white font-semibold text-lg mb-2">{step.title}</h3>
-                                    <p className="text-white/50 text-sm">{step.description}</p>
+                                    <h3 className="text-gray-900 dark:text-white font-semibold text-lg mb-2">{step.title}</h3>
+                                    <p className="text-gray-600 dark:text-white/50 text-sm">{step.description}</p>
                                 </GlassCard>
                             </motion.div>
                         ))}
@@ -394,10 +394,10 @@ export default function Services({ featuredServices, regularServices, allService
                         transition={{ duration: 0.5 }}
                     >
                         <GlassCard variant="gradient" size="lg" animatedBorder>
-                            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                                 Ready to build an AI solution?
                             </h2>
-                            <p className="text-white/60 mb-8 max-w-xl mx-auto">
+                            <p className="text-gray-600 dark:text-white/60 mb-8 max-w-xl mx-auto">
                                 Let's discuss your ML requirements and find the optimal approach 
                                 for your specific use case.
                             </p>
@@ -425,10 +425,10 @@ export default function Services({ featuredServices, regularServices, allService
                     <div className="max-w-2xl mx-auto px-4 text-center">
                         <GlassCard variant="default" size="lg">
                             <Briefcase className="w-16 h-16 text-cyan-500/50 mx-auto mb-4" />
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                                 Services Coming Soon
                             </h2>
-                            <p className="text-white/50 mb-6">
+                            <p className="text-gray-600 dark:text-white/50 mb-6">
                                 I'm currently setting up my services. Check back soon or reach out directly!
                             </p>
                             <Link href="/contact">

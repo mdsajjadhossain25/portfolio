@@ -71,12 +71,10 @@ function FeaturedPost({ post }: { post: Post }) {
             transition={{ duration: 0.5 }}
             className="mb-12"
         >
-            <div className="mb-4 flex items-center gap-2">
+                        <div className="mb-4 flex items-center gap-2">
                 <div className="h-[1px] w-8 bg-cyan-500" />
-                <span className="font-mono text-xs uppercase tracking-wider text-cyan-400">Featured Post</span>
-            </div>
-
-            <Link href={`/blog/${post.slug}`}>
+                <span className="font-mono text-xs uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Featured Post</span>
+            </div>            <Link href={`/blog/${post.slug}`}>
                 <motion.div
                     className="group relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-purple-500/10"
                     onMouseEnter={() => setIsHovered(true)}
@@ -118,12 +116,12 @@ function FeaturedPost({ post }: { post: Post }) {
                                 </div>
                             )}
 
-                            <h2 className="text-2xl lg:text-3xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                                 {post.title}
                             </h2>
 
                             {post.excerpt && (
-                                <p className="text-neutral-400 line-clamp-3">
+                                <p className="text-gray-600 dark:text-neutral-400 line-clamp-3">
                                     {post.excerpt}
                                 </p>
                             )}
@@ -134,7 +132,7 @@ function FeaturedPost({ post }: { post: Post }) {
                                 <span>{post.reading_time_text}</span>
                             </div>
 
-                            <div className="flex items-center gap-2 text-cyan-400 font-mono text-sm">
+                            <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-mono text-sm">
                                 <span>Read Article</span>
                                 <motion.svg
                                     className="w-4 h-4"
@@ -176,7 +174,7 @@ function PostCard({ post, index }: { post: Post; index: number }) {
         >
             <Link href={`/blog/${post.slug}`}>
                 <motion.div
-                    className="group relative h-full rounded-xl overflow-hidden border border-neutral-800 bg-gradient-to-br from-neutral-900 to-black hover:border-cyan-500/50 transition-all duration-300"
+                    className="group relative h-full rounded-xl overflow-hidden border border-gray-200/50 dark:border-neutral-800 bg-gradient-to-br from-gray-50 dark:from-neutral-900 to-white dark:to-black hover:border-cyan-500/50 transition-all duration-300"
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                     whileHover={{ y: -5 }}
@@ -212,17 +210,17 @@ function PostCard({ post, index }: { post: Post; index: number }) {
                             </div>
                         )}
 
-                        <h3 className="font-semibold text-white group-hover:text-cyan-400 transition-colors line-clamp-2">
+                        <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-2">
                             {post.title}
                         </h3>
 
                         {post.excerpt && (
-                            <p className="text-sm text-neutral-500 line-clamp-2">
+                            <p className="text-sm text-gray-600 dark:text-neutral-500 line-clamp-2">
                                 {post.excerpt}
                             </p>
                         )}
 
-                        <div className="flex items-center justify-between text-xs text-neutral-600 pt-2 border-t border-neutral-800">
+                        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-neutral-600 pt-2 border-t border-gray-200/50 dark:border-neutral-800">
                             <span>{post.formatted_date}</span>
                             <span>{post.reading_time_text}</span>
                         </div>
@@ -284,19 +282,19 @@ export default function Blog({ featuredPost, posts, categories, tags, filters }:
                     >
                         <div className="mb-4 flex items-center justify-center gap-3">
                             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-cyan-500" />
-                            <span className="font-mono text-xs uppercase tracking-wider text-cyan-400">
+                            <span className="font-mono text-xs uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
                                 Knowledge Base
                             </span>
                             <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-cyan-500" />
                         </div>
 
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            <GlitchText as="span" className="text-white">
+                            <GlitchText as="span" className="text-gray-900 dark:text-white">
                                 Blog & Articles
                             </GlitchText>
                         </h1>
 
-                        <p className="text-neutral-400 max-w-2xl mx-auto">
+                        <p className="text-gray-600 dark:text-neutral-400 max-w-2xl mx-auto">
                             Thoughts, tutorials, and insights on AI, Machine Learning, 
                             software engineering, and the future of technology.
                         </p>
@@ -325,7 +323,7 @@ export default function Blog({ featuredPost, posts, categories, tags, filters }:
                                     onChange={(e) => setSearch(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
                                     placeholder="Search articles..."
-                                    className="w-full rounded-lg border border-neutral-800 bg-black/50 py-2.5 pl-10 pr-4 text-sm text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                                    className="w-full rounded-lg border border-gray-200/50 dark:border-neutral-800 bg-gray-50 dark:bg-black/50 py-2.5 pl-10 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-neutral-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                                 />
                             </div>
                             <button
@@ -343,7 +341,7 @@ export default function Blog({ featuredPost, posts, categories, tags, filters }:
                                     setSelectedCategory(e.target.value);
                                     setTimeout(handleFilter, 0);
                                 }}
-                                className="rounded-lg border border-neutral-800 bg-black/50 px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                                className="rounded-lg border border-gray-200/50 dark:border-neutral-800 bg-gray-50 dark:bg-black/50 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-cyan-500 focus:outline-none"
                             >
                                 <option value="">All Categories</option>
                                 {categories.map((cat) => (
@@ -359,7 +357,7 @@ export default function Blog({ featuredPost, posts, categories, tags, filters }:
                                     setSelectedTag(e.target.value);
                                     setTimeout(handleFilter, 0);
                                 }}
-                                className="rounded-lg border border-neutral-800 bg-black/50 px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                                className="rounded-lg border border-gray-200/50 dark:border-neutral-800 bg-gray-50 dark:bg-black/50 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-cyan-500 focus:outline-none"
                             >
                                 <option value="">All Tags</option>
                                 {tags.map((tag) => (
@@ -372,7 +370,7 @@ export default function Blog({ featuredPost, posts, categories, tags, filters }:
                             {hasFilters && (
                                 <button
                                     onClick={clearFilters}
-                                    className="rounded-lg border border-neutral-800 bg-black/50 px-3 py-2 text-sm text-neutral-400 hover:text-white hover:border-neutral-700 transition-colors"
+                                    className="rounded-lg border border-gray-200/50 dark:border-neutral-800 bg-gray-50 dark:bg-black/50 px-3 py-2 text-sm text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-300 dark:hover:border-neutral-700 transition-colors"
                                 >
                                     Clear Filters
                                 </button>
@@ -437,8 +435,8 @@ export default function Blog({ featuredPost, posts, categories, tags, filters }:
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                             </svg>
-                            <h3 className="text-xl font-medium text-white mb-2">No posts found</h3>
-                            <p className="text-neutral-500">
+                            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">No posts found</h3>
+                            <p className="text-gray-600 dark:text-neutral-500">
                                 {hasFilters
                                     ? 'Try adjusting your filters or search terms.'
                                     : 'Check back soon for new articles!'}

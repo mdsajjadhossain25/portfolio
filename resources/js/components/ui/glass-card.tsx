@@ -11,28 +11,28 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const glassCardVariants = cva(
-    // Base glassmorphism styles
+    // Base glassmorphism styles - Theme aware
     `relative backdrop-blur-xl border overflow-hidden
      transition-all duration-500`,
     {
         variants: {
             variant: {
-                default: `bg-white/5 border-white/10
-                          hover:bg-white/10 hover:border-white/20`,
-                cyan: `bg-cyan-500/5 border-cyan-500/20
-                       hover:bg-cyan-500/10 hover:border-cyan-500/40
-                       shadow-[0_0_30px_rgba(0,255,255,0.1)]
-                       hover:shadow-[0_0_40px_rgba(0,255,255,0.2)]`,
-                purple: `bg-purple-500/5 border-purple-500/20
-                         hover:bg-purple-500/10 hover:border-purple-500/40
-                         shadow-[0_0_30px_rgba(167,139,250,0.1)]
-                         hover:shadow-[0_0_40px_rgba(167,139,250,0.2)]`,
-                crimson: `bg-pink-500/5 border-pink-500/20
-                          hover:bg-pink-500/10 hover:border-pink-500/40
-                          shadow-[0_0_30px_rgba(220,38,127,0.1)]
-                          hover:shadow-[0_0_40px_rgba(220,38,127,0.2)]`,
-                gradient: `bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10
-                           border-white/10 hover:border-white/30`,
+                default: `bg-white/80 dark:bg-white/5 border-gray-200/50 dark:border-white/10
+                          hover:bg-white/90 dark:hover:bg-white/10 hover:border-gray-300/50 dark:hover:border-white/20`,
+                cyan: `bg-cyan-50/80 dark:bg-cyan-500/5 border-cyan-200/50 dark:border-cyan-500/20
+                       hover:bg-cyan-100/80 dark:hover:bg-cyan-500/10 hover:border-cyan-300/50 dark:hover:border-cyan-500/40
+                       shadow-[0_0_20px_rgba(8,145,178,0.1)] dark:shadow-[0_0_30px_rgba(0,255,255,0.1)]
+                       hover:shadow-[0_0_30px_rgba(8,145,178,0.15)] dark:hover:shadow-[0_0_40px_rgba(0,255,255,0.2)]`,
+                purple: `bg-purple-50/80 dark:bg-purple-500/5 border-purple-200/50 dark:border-purple-500/20
+                         hover:bg-purple-100/80 dark:hover:bg-purple-500/10 hover:border-purple-300/50 dark:hover:border-purple-500/40
+                         shadow-[0_0_20px_rgba(147,51,234,0.1)] dark:shadow-[0_0_30px_rgba(167,139,250,0.1)]
+                         hover:shadow-[0_0_30px_rgba(147,51,234,0.15)] dark:hover:shadow-[0_0_40px_rgba(167,139,250,0.2)]`,
+                crimson: `bg-pink-50/80 dark:bg-pink-500/5 border-pink-200/50 dark:border-pink-500/20
+                          hover:bg-pink-100/80 dark:hover:bg-pink-500/10 hover:border-pink-300/50 dark:hover:border-pink-500/40
+                          shadow-[0_0_20px_rgba(219,39,119,0.1)] dark:shadow-[0_0_30px_rgba(220,38,127,0.1)]
+                          hover:shadow-[0_0_30px_rgba(219,39,119,0.15)] dark:hover:shadow-[0_0_40px_rgba(220,38,127,0.2)]`,
+                gradient: `bg-gradient-to-br from-cyan-50/80 via-purple-50/80 to-pink-50/80 dark:from-cyan-500/10 dark:via-purple-500/10 dark:to-pink-500/10
+                           border-gray-200/50 dark:border-white/10 hover:border-gray-300/50 dark:hover:border-white/30`,
             },
             size: {
                 sm: 'p-4 rounded-lg',
@@ -138,31 +138,31 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
                     />
                 )}
                 
-                {/* HUD-style corner accents */}
+                {/* HUD-style corner accents - Theme aware */}
                 {hudCorners && (
                     <>
                         {/* Top-left corner */}
                         <div className="absolute top-0 left-0 w-6 h-6 pointer-events-none">
-                            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-400 to-transparent" />
-                            <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-cyan-400 to-transparent" />
+                            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-600 dark:from-cyan-400 to-transparent" />
+                            <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-cyan-600 dark:from-cyan-400 to-transparent" />
                         </div>
                         
                         {/* Top-right corner */}
                         <div className="absolute top-0 right-0 w-6 h-6 pointer-events-none">
-                            <div className="absolute top-0 right-0 w-full h-[1px] bg-gradient-to-l from-cyan-400 to-transparent" />
-                            <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-cyan-400 to-transparent" />
+                            <div className="absolute top-0 right-0 w-full h-[1px] bg-gradient-to-l from-cyan-600 dark:from-cyan-400 to-transparent" />
+                            <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-cyan-600 dark:from-cyan-400 to-transparent" />
                         </div>
                         
                         {/* Bottom-left corner */}
                         <div className="absolute bottom-0 left-0 w-6 h-6 pointer-events-none">
-                            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-400 to-transparent" />
-                            <div className="absolute bottom-0 left-0 w-[1px] h-full bg-gradient-to-t from-cyan-400 to-transparent" />
+                            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-600 dark:from-cyan-400 to-transparent" />
+                            <div className="absolute bottom-0 left-0 w-[1px] h-full bg-gradient-to-t from-cyan-600 dark:from-cyan-400 to-transparent" />
                         </div>
                         
                         {/* Bottom-right corner */}
                         <div className="absolute bottom-0 right-0 w-6 h-6 pointer-events-none">
-                            <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-cyan-400 to-transparent" />
-                            <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-cyan-400 to-transparent" />
+                            <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-cyan-600 dark:from-cyan-400 to-transparent" />
+                            <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-cyan-600 dark:from-cyan-400 to-transparent" />
                         </div>
                     </>
                 )}

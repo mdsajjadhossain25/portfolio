@@ -8,6 +8,7 @@
  * - Floating HUD game menu (replaces traditional navbar)
  * - Footer
  * - Particle background
+ * - Light/Dark mode support
  */
 
 import { ReactNode } from 'react';
@@ -16,6 +17,7 @@ import { GameTransition, GameTransitionType } from '@/components/game-transition
 import { GameMenu } from '@/components/game-menu';
 import { Footer } from '@/components/footer';
 import { ParticleBackground } from '@/components/ui/particle-background';
+import { useAppearance } from '@/hooks/use-appearance';
 
 interface PortfolioLayoutProps {
     children: ReactNode;
@@ -42,8 +44,21 @@ export default function PortfolioLayout({
     className = '',
     isMapPage = false,
 }: PortfolioLayoutProps) {
+    const { resolvedAppearance } = useAppearance();
+    const isDark = resolvedAppearance === 'dark';
+    
+    // Theme-aware particle colors
+    const particleColors = isDark 
+        ? ['#00ffff', '#a78bfa', '#dc267f'] 
+        : ['#0891b2', '#7c3aed', '#db2777'];
+    
+    // Theme-aware gradient colors for particle background
+    const gradientColors = isDark
+        ? ['#000000', '#050510', '#0a0a1a', '#050510', '#000000']
+        : ['#f8fafc', '#f1f5f9', '#e2e8f0', '#f1f5f9', '#f8fafc'];
+    
     return (
-        <div className="relative min-h-screen bg-black text-white overflow-x-hidden">
+        <div className="relative min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white overflow-x-hidden transition-colors duration-300">
             {/* Animated custom cursor */}
             <AnimatedCursor />
             
@@ -51,10 +66,10 @@ export default function PortfolioLayout({
             {showParticles && !isMapPage && (
                 <ParticleBackground
                     particleCount={40}
-                    colors={['#00ffff', '#a78bfa', '#dc267f']}
+                    colors={particleColors}
                     showConnections={true}
                     connectionDistance={100}
-                    gradientColors={['#000000', '#050510', '#0a0a1a', '#050510', '#000000']}
+                    gradientColors={gradientColors}
                 />
             )}
             

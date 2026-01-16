@@ -147,7 +147,7 @@ function SkillTag({ skill, color }: { skill: Skill; color: 'cyan' | 'purple' | '
             {skill.icon && <span className="text-sm">{skill.icon}</span>}
             <span className={`text-sm font-medium ${colors.text}`}>{skill.name}</span>
             {skill.tag && (
-                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/70">
+                <span className="rounded-full bg-gray-200/80 dark:bg-white/10 px-2 py-0.5 text-[10px] text-gray-600 dark:text-white/70">
                     {skill.tag}
                 </span>
             )}
@@ -177,7 +177,7 @@ function SkillCategoryCard({ category }: { category: SkillCategory }) {
             >
                 <div className="space-y-4">
                     {category.description && (
-                        <p className="text-sm text-white/50">{category.description}</p>
+                        <p className="text-sm text-gray-600 dark:text-white/50">{category.description}</p>
                     )}
                     <div className="flex flex-wrap gap-2">
                         {category.skills.map((skill, index) => (
@@ -308,29 +308,29 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 animate={isHeroInView ? "animate" : "initial"}
                             >
                                 <motion.div variants={staggerItem} className="mb-6">
-                                    <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                                    <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                                         // Profile & Research Path
                                     </span>
                                 </motion.div>
                                 
                                 <motion.h1
                                     variants={staggerItem}
-                                    className="text-4xl sm:text-5xl font-bold text-white mb-6"
+                                    className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6"
                                 >
-                                    <GlitchText as="span" className="text-cyan-400">
+                                    <GlitchText as="span" className="text-cyan-600 dark:text-cyan-400">
                                         {profile.fullName.split(' ')[0]}
                                     </GlitchText>
                                     {profile.fullName.split(' ').slice(1).length > 0 && (
                                         <> {profile.fullName.split(' ').slice(1).join(' ')}</>
                                     )}
                                     <br />
-                                    <span className="text-white/80 text-3xl">{profile.title}</span>
+                                    <span className="text-gray-600 dark:text-white/80 text-3xl">{profile.title}</span>
                                 </motion.h1>
                                 
                                 {profile.subtitle && (
                                     <motion.p
                                         variants={staggerItem}
-                                        className="text-purple-400 text-lg mb-4 italic"
+                                        className="text-purple-600 dark:text-purple-400 text-lg mb-4 italic"
                                     >
                                         "{profile.subtitle}"
                                     </motion.p>
@@ -338,7 +338,7 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 
                                 <motion.p
                                     variants={staggerItem}
-                                    className="text-white/60 text-lg leading-relaxed mb-8"
+                                    className="text-gray-600 dark:text-white/60 text-lg leading-relaxed mb-8"
                                 >
                                     {profile.shortBio}
                                 </motion.p>
@@ -347,7 +347,7 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 {(profile.university || profile.cgpa || profile.academicHighlight) && (
                                     <motion.p
                                         variants={staggerItem}
-                                        className="text-white/50 leading-relaxed mb-8"
+                                        className="text-gray-500 dark:text-white/50 leading-relaxed mb-8"
                                     >
                                         {profile.university && (
                                             <>Academic foundation from {profile.university}</>
@@ -370,12 +370,12 @@ export default function About({ profile: profileData, skillCategories, experienc
                                         {personalInfo.map((info) => (
                                             <div
                                                 key={info.label}
-                                                className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
+                                                className="flex items-center gap-3 p-3 bg-gray-100/80 dark:bg-white/5 rounded-lg border border-gray-200/50 dark:border-white/10"
                                             >
                                                 <span className="text-xl">{info.icon}</span>
                                                 <div>
-                                                    <div className="text-white/40 text-xs font-mono uppercase">{info.label}</div>
-                                                    <div className="text-white text-sm font-medium">{info.value}</div>
+                                                    <div className="text-gray-500 dark:text-white/40 text-xs font-mono uppercase">{info.label}</div>
+                                                    <div className="text-gray-900 dark:text-white text-sm font-medium">{info.value}</div>
                                                 </div>
                                             </div>
                                         ))}
@@ -396,11 +396,11 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                                <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                                     // Technical Proficiency
                                 </span>
-                                <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
-                                    My <GlitchText as="span" className="text-purple-400">Skills</GlitchText>
+                                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mt-4">
+                                    My <GlitchText as="span" className="text-purple-600 dark:text-purple-400">Skills</GlitchText>
                                 </h2>
                             </motion.div>
                             
@@ -423,11 +423,11 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                                <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                                     // Research Path
                                 </span>
-                                <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
-                                    My <GlitchText as="span" className="text-pink-400">Journey</GlitchText>
+                                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mt-4">
+                                    My <GlitchText as="span" className="text-pink-600 dark:text-pink-400">Journey</GlitchText>
                                 </h2>
                             </motion.div>
                             
@@ -465,15 +465,15 @@ export default function About({ profile: profileData, skillCategories, experienc
                                             <GlassCard variant="default" size="md" hover="lift">
                                                 <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
                                                     <div>
-                                                        <span className="text-cyan-400 font-mono text-sm">{item.year}</span>
-                                                        <h3 className="text-white font-semibold text-lg">{item.title}</h3>
+                                                        <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm">{item.year}</span>
+                                                        <h3 className="text-gray-900 dark:text-white font-semibold text-lg">{item.title}</h3>
                                                     </div>
-                                                    <span className="text-purple-400 text-sm font-mono">
+                                                    <span className="text-purple-600 dark:text-purple-400 text-sm font-mono">
                                                         {item.company}
                                                     </span>
                                                 </div>
                                                 {item.description && (
-                                                    <p className="text-white/50 text-sm">{item.description}</p>
+                                                    <p className="text-gray-600 dark:text-white/50 text-sm">{item.description}</p>
                                                 )}
                                                 {item.isCurrent && (
                                                     <span className="mt-2 inline-block rounded-full bg-green-500/10 border border-green-500/30 px-2 py-0.5 text-xs text-green-400">
@@ -498,10 +498,10 @@ export default function About({ profile: profileData, skillCategories, experienc
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                            <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                                 // Core Values
                             </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4">
+                            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mt-4">
                                 What Drives Me
                             </h2>
                         </motion.div>
@@ -548,8 +548,8 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 >
                                     <GlassCard variant="default" size="md" hover="scale">
                                         <span className="text-3xl mb-4 block">{value.icon}</span>
-                                        <h3 className="text-white font-semibold text-lg mb-2">{value.title}</h3>
-                                        <p className="text-white/50 text-sm">{value.description}</p>
+                                        <h3 className="text-gray-900 dark:text-white font-semibold text-lg mb-2">{value.title}</h3>
+                                        <p className="text-gray-600 dark:text-white/50 text-sm">{value.description}</p>
                                     </GlassCard>
                                 </motion.div>
                             ))}
@@ -567,10 +567,10 @@ export default function About({ profile: profileData, skillCategories, experienc
                                 viewport={{ once: true }}
                             >
                                 <GlassCard variant="gradient" size="lg">
-                                    <h3 className="text-2xl font-bold text-white mb-4">
+                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                                         Let's Work Together
                                     </h3>
-                                    <p className="text-white/60 mb-6">
+                                    <p className="text-gray-600 dark:text-white/60 mb-6">
                                         Interested in AI/ML consulting, research collaboration, or just want to chat?
                                     </p>
                                     <div className="flex flex-wrap justify-center gap-4">

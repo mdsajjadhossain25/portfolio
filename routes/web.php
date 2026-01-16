@@ -36,7 +36,7 @@ Route::get('/services/{service:slug}', [ServicesController::class, 'show'])->nam
 // Blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
-Route::post('/blog/{post}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
+Route::post('/blog/{post:id}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
 
 // Contact page with form submission
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');

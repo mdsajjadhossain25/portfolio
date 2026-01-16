@@ -32,7 +32,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function TagsIndex({ tags }: Props) {
     const handleDelete = (tag: Tag) => {
         if (confirm(`Are you sure you want to delete "${tag.name}"? It will be removed from all posts.`)) {
-            router.delete(`/admin/blog/tags/${tag.slug}`);
+            router.delete(`/admin/blog/tags/${tag.id}`);
         }
     };
 
@@ -92,7 +92,7 @@ export default function TagsIndex({ tags }: Props) {
                                 </div>
                                 <div className="flex items-center gap-1 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Link
-                                        href={`/admin/blog/tags/${tag.slug}/edit`}
+                                        href={`/admin/blog/tags/${tag.id}/edit`}
                                         className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                                     >
                                         <Edit className="h-4 w-4" />

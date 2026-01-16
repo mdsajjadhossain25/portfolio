@@ -137,16 +137,16 @@ export default function ProjectsIndex({ projects, projectTypes }: Props) {
 
     const handleDelete = (project: Project) => {
         if (confirm(`Are you sure you want to delete "${project.title}"?`)) {
-            router.delete(`/admin/projects/${project.slug}`);
+            router.delete(`/admin/projects/${project.id}`);
         }
     };
 
     const handleToggleFeatured = (project: Project) => {
-        router.post(`/admin/projects/${project.slug}/toggle-featured`);
+        router.post(`/admin/projects/${project.id}/toggle-featured`);
     };
 
     const handleToggleActive = (project: Project) => {
-        router.post(`/admin/projects/${project.slug}/toggle-active`);
+        router.post(`/admin/projects/${project.id}/toggle-active`);
     };
 
     return (
@@ -330,7 +330,7 @@ export default function ProjectsIndex({ projects, projectTypes }: Props) {
                                                 <EyeOff className="h-4 w-4" />
                                             )}
                                         </Button>
-                                        <Link href={`/admin/projects/${project.slug}/edit`}>
+                                        <Link href={`/admin/projects/${project.id}/edit`}>
                                             <Button variant="ghost" size="icon">
                                                 <Edit className="h-4 w-4" />
                                             </Button>

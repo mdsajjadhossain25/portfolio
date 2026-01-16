@@ -75,21 +75,21 @@ function FormField({
     const [isFocused, setIsFocused] = useState(false);
     
     const inputClasses = `
-        w-full px-4 py-3 bg-white/5 border rounded-lg
-        text-white placeholder-white/30 text-sm
+        w-full px-4 py-3 bg-gray-100/80 dark:bg-white/5 border rounded-lg
+        text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 text-sm
         transition-all duration-300
         ${error 
             ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/30' 
-            : 'border-white/10 focus:border-cyan-500/50 focus:ring-cyan-500/30'
+            : 'border-gray-200/50 dark:border-white/10 focus:border-cyan-500/50 focus:ring-cyan-500/30'
         }
         focus:outline-none focus:ring-1
     `;
     
     return (
         <div className="relative">
-            <label className="block text-white/70 text-sm font-medium mb-2">
+            <label className="block text-gray-600 dark:text-white/70 text-sm font-medium mb-2">
                 {label}
-                {required && <span className="text-cyan-400 ml-1">*</span>}
+                {required && <span className="text-cyan-600 dark:text-cyan-400 ml-1">*</span>}
             </label>
             
             <div className="relative">
@@ -200,16 +200,16 @@ export default function Contact() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
+                        <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm uppercase tracking-wider">
                             // Collaboration Terminal
                         </span>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mt-4 mb-6">
                             Let's{' '}
-                            <GlitchText as="span" className="text-cyan-400">
+                            <GlitchText as="span" className="text-cyan-600 dark:text-cyan-400">
                                 Collaborate
                             </GlitchText>
                         </h1>
-                        <p className="text-white/50 text-lg max-w-2xl mx-auto">
+                        <p className="text-gray-600 dark:text-white/50 text-lg max-w-2xl mx-auto">
                             Looking for AI consulting, research collaboration, or engineering roles? 
                             Let's discuss how I can contribute to your AI initiatives.
                         </p>
@@ -248,8 +248,8 @@ export default function Contact() {
                                             >
                                                 ✅
                                             </motion.div>
-                                            <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                                            <p className="text-white/60">
+                                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Message Sent!</h3>
+                                            <p className="text-gray-600 dark:text-white/60">
                                                 Thank you for reaching out. I'll review and respond within 24-48 hours.
                                             </p>
                                         </motion.div>
@@ -318,7 +318,7 @@ export default function Contact() {
                                             />
                                             
                                             <div className="flex items-center justify-between pt-4">
-                                                <p className="text-white/40 text-xs font-mono">
+                                                <p className="text-gray-500 dark:text-white/40 text-xs font-mono">
                                                     * Required fields
                                                 </p>
                                                 <GlowButton
@@ -374,7 +374,7 @@ export default function Contact() {
                                         Open for Collaboration
                                     </span>
                                 </div>
-                                <p className="text-white/60 text-sm">
+                                <p className="text-gray-600 dark:text-white/60 text-sm">
                                     Available for AI consulting, research collaboration, and 
                                     full-time engineering opportunities. Response: 24-48h.
                                 </p>
@@ -405,10 +405,10 @@ export default function Contact() {
                                                     {method.icon}
                                                 </span>
                                                 <div className="flex-1">
-                                                    <div className="text-white font-medium group-hover:text-cyan-400 transition-colors">
+                                                    <div className="text-gray-900 dark:text-white font-medium group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                                                         {method.label}
                                                     </div>
-                                                    <div className="text-white/40 text-sm">{method.description}</div>
+                                                    <div className="text-gray-500 dark:text-white/40 text-sm">{method.description}</div>
                                                 </div>
                                                 <svg 
                                                     className="w-5 h-5 text-white/30 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" 
@@ -429,8 +429,8 @@ export default function Contact() {
                                 <div className="flex items-start gap-3">
                                     <span className="text-2xl">🎓</span>
                                     <div>
-                                        <div className="text-white font-medium mb-1">Background</div>
-                                        <div className="text-white/50 text-sm">
+                                        <div className="text-gray-900 dark:text-white font-medium mb-1">Background</div>
+                                        <div className="text-gray-600 dark:text-white/50 text-sm">
                                             University of Rajshahi • CGPA: 3.69/4.0
                                             <br />
                                             Deep Mind Labs Ltd. • AI Engineer
@@ -452,8 +452,8 @@ export default function Contact() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-2xl sm:text-3xl font-bold text-white">
-                            Frequently Asked <GlitchText as="span" className="text-purple-400">Questions</GlitchText>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                            Frequently Asked <GlitchText as="span" className="text-purple-600 dark:text-purple-400">Questions</GlitchText>
                         </h2>
                     </motion.div>
                     
@@ -484,8 +484,8 @@ export default function Contact() {
                                 transition={{ delay: index * 0.1 }}
                             >
                                 <GlassCard variant="default" size="md" hover="none" hudCorners={false}>
-                                    <h3 className="text-white font-medium mb-2">{faq.q}</h3>
-                                    <p className="text-white/50 text-sm">{faq.a}</p>
+                                    <h3 className="text-gray-900 dark:text-white font-medium mb-2">{faq.q}</h3>
+                                    <p className="text-gray-600 dark:text-white/50 text-sm">{faq.a}</p>
                                 </GlassCard>
                             </motion.div>
                         ))}

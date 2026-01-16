@@ -13,6 +13,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { router, usePage } from '@inertiajs/react';
 import { mapNodes, getNodeByHref, type MapNode } from '../game-map/map-config';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 interface GameMenuProps {
     className?: string;
@@ -117,46 +118,53 @@ export function GameMenu({ className = '' }: GameMenuProps) {
     
     return (
         <>
-            {/* Menu trigger button */}
-            <motion.button
-                className={`fixed top-4 right-4 z-50 p-3 rounded-lg backdrop-blur-md
-                           bg-black/50 border border-cyan-500/30 hover:border-cyan-500/60
-                           transition-colors duration-300 ${className}`}
-                onClick={() => setIsOpen(prev => !prev)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Toggle navigation menu"
-            >
-                <motion.div
-                    className="w-6 h-6 flex flex-col items-center justify-center gap-1.5"
-                    animate={isOpen ? 'open' : 'closed'}
+            {/* Top-right controls */}
+            <div className={`fixed top-4 right-4 z-50 flex items-center gap-2 ${className}`}>
+                {/* Theme toggle button */}
+                <ThemeToggle variant="default" size="md" />
+                
+                {/* Menu trigger button */}
+                <motion.button
+                    className="p-3 rounded-lg backdrop-blur-md
+                               bg-white/5 dark:bg-black/50 border border-gray-300/50 dark:border-cyan-500/30 
+                               hover:border-cyan-500/60 hover:bg-cyan-500/10
+                               transition-colors duration-300"
+                    onClick={() => setIsOpen(prev => !prev)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    aria-label="Toggle navigation menu"
                 >
-                    <motion.span
-                        className="w-5 h-0.5 bg-cyan-400 block"
-                        variants={{
-                            closed: { rotate: 0, y: 0 },
-                            open: { rotate: 45, y: 6 },
-                        }}
-                        transition={{ duration: 0.2 }}
-                    />
-                    <motion.span
-                        className="w-5 h-0.5 bg-cyan-400 block"
-                        variants={{
-                            closed: { opacity: 1, scale: 1 },
-                            open: { opacity: 0, scale: 0 },
-                        }}
-                        transition={{ duration: 0.2 }}
-                    />
-                    <motion.span
-                        className="w-5 h-0.5 bg-cyan-400 block"
-                        variants={{
-                            closed: { rotate: 0, y: 0 },
-                            open: { rotate: -45, y: -6 },
-                        }}
-                        transition={{ duration: 0.2 }}
-                    />
-                </motion.div>
-            </motion.button>
+                    <motion.div
+                        className="w-6 h-6 flex flex-col items-center justify-center gap-1.5"
+                        animate={isOpen ? 'open' : 'closed'}
+                    >
+                        <motion.span
+                            className="w-5 h-0.5 bg-gray-600 dark:bg-cyan-400 block"
+                            variants={{
+                                closed: { rotate: 0, y: 0 },
+                                open: { rotate: 45, y: 6 },
+                            }}
+                            transition={{ duration: 0.2 }}
+                        />
+                        <motion.span
+                            className="w-5 h-0.5 bg-gray-600 dark:bg-cyan-400 block"
+                            variants={{
+                                closed: { opacity: 1, scale: 1 },
+                                open: { opacity: 0, scale: 0 },
+                            }}
+                            transition={{ duration: 0.2 }}
+                        />
+                        <motion.span
+                            className="w-5 h-0.5 bg-gray-600 dark:bg-cyan-400 block"
+                            variants={{
+                                closed: { rotate: 0, y: 0 },
+                                open: { rotate: -45, y: -6 },
+                            }}
+                            transition={{ duration: 0.2 }}
+                        />
+                    </motion.div>
+                </motion.button>
+            </div>
             
             {/* Menu overlay */}
             <AnimatePresence>

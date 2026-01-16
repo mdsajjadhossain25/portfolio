@@ -75,13 +75,13 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::get('/', [ProjectController::class, 'index'])->name('index');
         Route::get('/create', [ProjectController::class, 'create'])->name('create');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
-        Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
-        Route::put('/{project}', [ProjectController::class, 'update'])->name('update');
-        Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
-        Route::post('/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('toggle-featured');
-        Route::post('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('toggle-active');
+        Route::get('/{project:id}/edit', [ProjectController::class, 'edit'])->name('edit');
+        Route::put('/{project:id}', [ProjectController::class, 'update'])->name('update');
+        Route::delete('/{project:id}', [ProjectController::class, 'destroy'])->name('destroy');
+        Route::post('/{project:id}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/{project:id}/toggle-active', [ProjectController::class, 'toggleActive'])->name('toggle-active');
         Route::post('/reorder', [ProjectController::class, 'reorder'])->name('reorder');
-        Route::delete('/{project}/images/{image}', [ProjectController::class, 'deleteImage'])->name('delete-image');
+        Route::delete('/{project:id}/images/{image}', [ProjectController::class, 'deleteImage'])->name('delete-image');
     });
 
     // Project Types Management
@@ -103,12 +103,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
             Route::get('/', [BlogPostController::class, 'index'])->name('index');
             Route::get('/create', [BlogPostController::class, 'create'])->name('create');
             Route::post('/', [BlogPostController::class, 'store'])->name('store');
-            Route::get('/{post}/edit', [BlogPostController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [BlogPostController::class, 'update'])->name('update');
-            Route::delete('/{post}', [BlogPostController::class, 'destroy'])->name('destroy');
-            Route::post('/{post}/toggle-featured', [BlogPostController::class, 'toggleFeatured'])->name('toggle-featured');
-            Route::post('/{post}/toggle-publish', [BlogPostController::class, 'togglePublish'])->name('toggle-publish');
-            Route::get('/{post}/preview', [BlogPostController::class, 'preview'])->name('preview');
+            Route::get('/{post:id}/edit', [BlogPostController::class, 'edit'])->name('edit');
+            Route::put('/{post:id}', [BlogPostController::class, 'update'])->name('update');
+            Route::delete('/{post:id}', [BlogPostController::class, 'destroy'])->name('destroy');
+            Route::post('/{post:id}/toggle-featured', [BlogPostController::class, 'toggleFeatured'])->name('toggle-featured');
+            Route::post('/{post:id}/toggle-publish', [BlogPostController::class, 'togglePublish'])->name('toggle-publish');
+            Route::get('/{post:id}/preview', [BlogPostController::class, 'preview'])->name('preview');
         });
 
         // Blog Categories
@@ -116,9 +116,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
             Route::get('/', [BlogCategoryController::class, 'index'])->name('index');
             Route::get('/create', [BlogCategoryController::class, 'create'])->name('create');
             Route::post('/', [BlogCategoryController::class, 'store'])->name('store');
-            Route::get('/{category}/edit', [BlogCategoryController::class, 'edit'])->name('edit');
-            Route::put('/{category}', [BlogCategoryController::class, 'update'])->name('update');
-            Route::delete('/{category}', [BlogCategoryController::class, 'destroy'])->name('destroy');
+            Route::get('/{category:id}/edit', [BlogCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{category:id}', [BlogCategoryController::class, 'update'])->name('update');
+            Route::delete('/{category:id}', [BlogCategoryController::class, 'destroy'])->name('destroy');
             Route::post('/reorder', [BlogCategoryController::class, 'reorder'])->name('reorder');
         });
 
@@ -127,9 +127,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
             Route::get('/', [BlogTagController::class, 'index'])->name('index');
             Route::get('/create', [BlogTagController::class, 'create'])->name('create');
             Route::post('/', [BlogTagController::class, 'store'])->name('store');
-            Route::get('/{tag}/edit', [BlogTagController::class, 'edit'])->name('edit');
-            Route::put('/{tag}', [BlogTagController::class, 'update'])->name('update');
-            Route::delete('/{tag}', [BlogTagController::class, 'destroy'])->name('destroy');
+            Route::get('/{tag:id}/edit', [BlogTagController::class, 'edit'])->name('edit');
+            Route::put('/{tag:id}', [BlogTagController::class, 'update'])->name('update');
+            Route::delete('/{tag:id}', [BlogTagController::class, 'destroy'])->name('destroy');
         });
 
         // Blog Comments

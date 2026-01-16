@@ -38,7 +38,7 @@ export default function CategoriesIndex({ categories }: Props) {
             return;
         }
         if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
-            router.delete(`/admin/blog/categories/${category.slug}`);
+            router.delete(`/admin/blog/categories/${category.id}`);
         }
     };
 
@@ -114,7 +114,7 @@ export default function CategoriesIndex({ categories }: Props) {
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-center gap-1">
                                                 <Link
-                                                    href={`/admin/blog/categories/${category.slug}/edit`}
+                                                    href={`/admin/blog/categories/${category.id}/edit`}
                                                     className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                                                 >
                                                     <Edit className="h-4 w-4" />

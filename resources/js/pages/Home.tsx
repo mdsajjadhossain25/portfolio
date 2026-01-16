@@ -16,6 +16,7 @@ import { Head, router } from '@inertiajs/react';
 import { PortfolioLayout } from '@/layouts/portfolio';
 import { MapNode } from '@/components/game-map/map-node';
 import { mapNodes, type MapNode as MapNodeType } from '@/components/game-map/map-config';
+import { useAppearance } from '@/hooks/use-appearance';
 
 // Mobile-adjusted node positions (spread out to avoid label overlaps)
 const mobilePositions: Record<string, { x: number; y: number }> = {
@@ -75,6 +76,8 @@ export default function Home() {
     const [showIntro, setShowIntro] = useState(true);
     const [systemTime, setSystemTime] = useState('');
     const isMobile = useIsMobile();
+    const { resolvedAppearance } = useAppearance();
+    const isDark = resolvedAppearance === 'dark';
     
     // Generate static elements once
     const [stars] = useState(() => generateStars(150));
@@ -180,13 +183,13 @@ export default function Home() {
             
             <div 
                 ref={containerRef}
-                className="relative w-full h-screen overflow-hidden bg-black"
+                className={`relative w-full h-screen overflow-hidden transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-gradient-to-b from-slate-100 to-slate-200'}`}
             >
                 {/* Intro overlay */}
                 <AnimatePresence>
                     {showIntro && (
                         <motion.div
-                            className="absolute inset-0 z-[60] flex items-center justify-center bg-black"
+                            className={`absolute inset-0 z-[60] flex items-center justify-center ${isDark ? 'bg-black' : 'bg-white'}`}
                             initial={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1 }}
@@ -199,13 +202,13 @@ export default function Home() {
                                 transition={{ duration: 0.5 }}
                             >
                                 <motion.div
-                                    className="text-cyan-400 text-xs font-mono tracking-[0.5em] mb-4"
+                                    className={`text-xs font-mono tracking-[0.5em] mb-4 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}
                                     animate={{ opacity: [0.5, 1, 0.5] }}
                                     transition={{ duration: 1.5, repeat: Infinity }}
                                 >
                                     INITIALIZING AI SYSTEMS
                                 </motion.div>
-                                <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mx-auto">
+                                <div className={`w-48 h-1 rounded-full overflow-hidden mx-auto ${isDark ? 'bg-white/10' : 'bg-gray-200'}`}>
                                     <motion.div
                                         className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full"
                                         initial={{ width: '0%' }}
@@ -219,7 +222,7 @@ export default function Home() {
                 </AnimatePresence>
                 
                 {/* Anime-inspired atmospheric background */}
-                <div className="absolute inset-0 overflow-hidden">
+                <div className={`absolute inset-0 overflow-hidden ${!isDark && 'opacity-60'}`}>
                     {/* Base dark gradient with color tones */}
                     <div className="absolute inset-0 bg-gradient-to-b from-[#0a0015] via-[#0d0a1a] to-[#050510]" />
                     
