@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ServicesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -27,9 +28,9 @@ Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
-Route::get('/services', function () {
-    return Inertia::render('Services');
-})->name('services');
+// Services pages with dynamic data
+Route::get('/services', [ServicesController::class, 'index'])->name('services');
+Route::get('/services/{service:slug}', [ServicesController::class, 'show'])->name('services.show');
 
 // Blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BlogTagController;
 use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProjectTypeController;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController;
 use Illuminate\Support\Facades\Route;
@@ -142,7 +143,19 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         });
     });
 
+    // Services Management
+    Route::prefix('services')->name('services.')->group(function () {
+        Route::get('/', [ServiceController::class, 'index'])->name('index');
+        Route::get('/create', [ServiceController::class, 'create'])->name('create');
+        Route::post('/', [ServiceController::class, 'store'])->name('store');
+        Route::get('/{service}/edit', [ServiceController::class, 'edit'])->name('edit');
+        Route::put('/{service}', [ServiceController::class, 'update'])->name('update');
+        Route::delete('/{service}', [ServiceController::class, 'destroy'])->name('destroy');
+        Route::post('/{service}/toggle-active', [ServiceController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/{service}/toggle-featured', [ServiceController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/reorder', [ServiceController::class, 'reorder'])->name('reorder');
+    });
+
     // Placeholder routes for other sections
-    Route::get('/services', fn () => Inertia::render('admin/services/Index'))->name('services');
     Route::get('/contact', fn () => Inertia::render('admin/contact/Index'))->name('contact');
 });
