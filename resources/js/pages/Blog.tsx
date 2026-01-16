@@ -1,402 +1,460 @@
 /**
  * Blog Page
  * 
- * Futuristic blog listing with:
- * - Animated article cards
- * - Smooth scroll-entry effects
- * - Category filtering
+ * Blog listing with:
+ * - Featured post highlight
+ * - Animated post cards
+ * - Category/tag filters
  * - Search functionality
+ * - Pagination
  */
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { PortfolioLayout } from '@/layouts/portfolio';
 import { GlitchText } from '@/components/ui/glitch-text';
-import { GlassCard } from '@/components/ui/glass-card';
-import { GlowButton } from '@/components/ui/glow-button';
-import { staggerContainer, staggerItem } from '@/animations/transitions';
 
-// Blog categories
-const categories = [
-    { id: 'all', label: 'All Posts' },
-    { id: 'cv', label: 'Computer Vision' },
-    { id: 'nlp', label: 'NLP & LLMs' },
-    { id: 'research', label: 'Research Notes' },
-    { id: 'tutorials', label: 'Tutorials' },
-];
+interface Category {
+    name: string;
+    slug: string;
+    posts_count: number;
+}
 
-// Sample blog posts
-const blogPosts = [
-    {
-        id: 1,
-        title: 'Understanding Attention Mechanisms in Vision Transformers',
-        excerpt: 'Deep dive into self-attention for image classification. How ViT processes patches and learns spatial relationships.',
-        category: 'cv',
-        date: '2024-01-10',
-        readTime: '12 min read',
-        tags: ['ViT', 'Transformers', 'Attention'],
-        featured: true,
-    },
-    {
-        id: 2,
-        title: 'Building RAG Systems: Lessons from Production',
-        excerpt: 'Practical insights on chunking strategies, embedding models, and retrieval optimization for LLM applications.',
-        category: 'nlp',
-        date: '2024-01-05',
-        readTime: '10 min read',
-        tags: ['RAG', 'LangChain', 'Vector DB'],
-        featured: true,
-    },
-    {
-        id: 3,
-        title: 'CNN+LSTM for Human Activity Recognition: A Benchmark Study',
-        excerpt: 'Comparing architectures for video-based HAR. Accuracy vs. inference speed trade-offs on UCF-101.',
-        category: 'research',
-        date: '2023-12-20',
-        readTime: '15 min read',
-        tags: ['HAR', 'CNN', 'LSTM', 'Research'],
-        featured: false,
-    },
-    {
-        id: 4,
-        title: 'Grad-CAM: Making CNNs Explainable',
-        excerpt: 'Step-by-step guide to implementing gradient-weighted class activation mapping for model interpretability.',
-        category: 'tutorials',
-        date: '2023-12-15',
-        readTime: '8 min read',
-        tags: ['Tutorial', 'Grad-CAM', 'XAI'],
-        featured: false,
-    },
-    {
-        id: 5,
-        title: 'YOLO vs Faster R-CNN: When to Use Which',
-        excerpt: 'Practical comparison of single-shot and two-stage detectors. Benchmarks on custom industrial datasets.',
-        category: 'cv',
-        date: '2023-12-10',
-        readTime: '9 min read',
-        tags: ['YOLO', 'Object Detection', 'Benchmarks'],
-        featured: false,
-    },
-    {
-        id: 6,
-        title: 'Fine-tuning LLMs with LoRA: A Practical Guide',
-        excerpt: 'Efficient adaptation of large language models using Low-Rank Adaptation. Reduced compute, comparable results.',
-        category: 'nlp',
-        date: '2023-12-05',
-        readTime: '11 min read',
-        tags: ['LLM', 'LoRA', 'Fine-tuning'],
-        featured: false,
-    },
-];
+interface Tag {
+    name: string;
+    slug: string;
+    posts_count: number;
+}
 
-// Format date
-const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-};
+interface Post {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    cover_url: string | null;
+    author_name: string;
+    reading_time_text: string;
+    formatted_date: string;
+    categories: Category[];
+    tags: Tag[];
+}
 
-// Blog card component
-function BlogCard({ post, index, featured = false }: { post: typeof blogPosts[0]; index: number; featured?: boolean }) {
+interface PaginatedPosts {
+    data: Post[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    links: { url: string | null; label: string; active: boolean }[];
+}
+
+interface Props {
+    featuredPost: Post | null;
+    posts: PaginatedPosts;
+    categories: Category[];
+    tags: Tag[];
+    filters: {
+        category?: string;
+        tag?: string;
+        search?: string;
+    };
+}
+
+// Featured post component
+function FeaturedPost({ post }: { post: Post }) {
     const [isHovered, setIsHovered] = useState(false);
-    
+
     return (
-        <motion.article
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            className={`group ${featured ? 'md:col-span-2' : ''}`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12"
         >
-            <Link href={`/blog/${post.id}`}>
-                <GlassCard
-                    variant="default"
-                    size="md"
-                    hover="lift"
-                    className="h-full"
+            <div className="mb-4 flex items-center gap-2">
+                <div className="h-[1px] w-8 bg-cyan-500" />
+                <span className="font-mono text-xs uppercase tracking-wider text-cyan-400">Featured Post</span>
+            </div>
+
+            <Link href={`/blog/${post.slug}`}>
+                <motion.div
+                    className="group relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-purple-500/10"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
                 >
-                    {/* Image placeholder */}
-                    <div className="relative aspect-video mb-4 rounded-lg overflow-hidden bg-gradient-to-br from-cyan-900/30 to-purple-900/30">
-                        {/* Grid pattern */}
-                        <div 
-                            className="absolute inset-0 opacity-20"
-                            style={{
-                                backgroundImage: `
-                                    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                                    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-                                `,
-                                backgroundSize: '20px 20px',
-                            }}
-                        />
-                        
-                        {/* Featured badge */}
-                        {post.featured && (
-                            <div className="absolute top-3 left-3 px-2 py-1 bg-cyan-500/20 border border-cyan-500/50 rounded text-cyan-400 text-xs font-mono uppercase">
-                                Featured
-                            </div>
-                        )}
-                        
-                        {/* Category badge */}
-                        <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/50 backdrop-blur-sm rounded text-white/70 text-xs font-mono uppercase">
-                            {post.category}
+                    <div className="grid md:grid-cols-2 gap-6 p-6 lg:p-8">
+                        {/* Image */}
+                        <div className="relative aspect-video overflow-hidden rounded-xl bg-black/50">
+                            {post.cover_url ? (
+                                <img
+                                    src={post.cover_url}
+                                    alt={post.title}
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-900/50 to-black">
+                                    <svg className="h-16 w-16 text-cyan-500/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                    </svg>
+                                </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         </div>
-                        
-                        {/* Hover scan line */}
-                        <motion.div
-                            className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-                            initial={{ top: '0%', opacity: 0 }}
-                            animate={{
-                                top: isHovered ? ['0%', '100%'] : '0%',
-                                opacity: isHovered ? 1 : 0,
-                            }}
-                            transition={{
-                                top: { duration: 1.5, repeat: Infinity },
-                                opacity: { duration: 0.3 },
-                            }}
-                        />
+
+                        {/* Content */}
+                        <div className="flex flex-col justify-center space-y-4">
+                            {post.categories.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {post.categories.map((cat) => (
+                                        <span
+                                            key={cat.slug}
+                                            className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400"
+                                        >
+                                            {cat.name}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
+                            <h2 className="text-2xl lg:text-3xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                                {post.title}
+                            </h2>
+
+                            {post.excerpt && (
+                                <p className="text-neutral-400 line-clamp-3">
+                                    {post.excerpt}
+                                </p>
+                            )}
+
+                            <div className="flex items-center gap-4 text-sm text-neutral-500">
+                                <span>{post.formatted_date}</span>
+                                <span>•</span>
+                                <span>{post.reading_time_text}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-cyan-400 font-mono text-sm">
+                                <span>Read Article</span>
+                                <motion.svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    animate={{ x: isHovered ? 4 : 0 }}
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </motion.svg>
+                            </div>
+                        </div>
                     </div>
-                    
-                    {/* Content */}
-                    <div className="flex items-center gap-3 text-white/40 text-xs font-mono mb-3">
-                        <span>{formatDate(post.date)}</span>
-                        <span className="w-1 h-1 rounded-full bg-white/30" />
-                        <span>{post.readTime}</span>
-                    </div>
-                    
-                    <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-cyan-400 transition-colors">
-                        {post.title}
-                    </h3>
-                    
-                    <p className="text-white/50 text-sm mb-4 line-clamp-2">
-                        {post.excerpt}
-                    </p>
-                    
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                        {post.tags.map((tag) => (
-                            <span
-                                key={tag}
-                                className="px-2 py-1 text-xs font-mono text-white/50 bg-white/5 rounded border border-white/10"
-                            >
-                                #{tag}
-                            </span>
-                        ))}
-                    </div>
-                    
-                    {/* Read more indicator */}
+
                     <motion.div
-                        className="flex items-center gap-2 mt-4 text-cyan-400 text-sm font-medium"
-                        initial={{ x: 0 }}
-                        animate={{ x: isHovered ? 5 : 0 }}
-                    >
-                        <span>Read Article</span>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                        </svg>
-                    </motion.div>
-                </GlassCard>
+                        className="absolute inset-0 rounded-2xl pointer-events-none"
+                        animate={{
+                            boxShadow: isHovered
+                                ? '0 0 60px rgba(0, 255, 255, 0.2), inset 0 0 60px rgba(0, 255, 255, 0.05)'
+                                : '0 0 0 rgba(0, 255, 255, 0)',
+                        }}
+                    />
+                </motion.div>
             </Link>
-        </motion.article>
+        </motion.div>
     );
 }
 
-export default function Blog() {
-    const [activeCategory, setActiveCategory] = useState('all');
-    const [searchQuery, setSearchQuery] = useState('');
-    
-    // Filter posts based on category and search
-    const filteredPosts = useMemo(() => {
-        return blogPosts.filter(post => {
-            const matchesCategory = activeCategory === 'all' || post.category === activeCategory;
-            const matchesSearch = !searchQuery || 
-                post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-            return matchesCategory && matchesSearch;
-        });
-    }, [activeCategory, searchQuery]);
-    
-    // Separate featured and regular posts
-    const featuredPosts = filteredPosts.filter(p => p.featured);
-    const regularPosts = filteredPosts.filter(p => !p.featured);
-    
+// Post card component
+function PostCard({ post, index }: { post: Post; index: number }) {
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
-        <PortfolioLayout transitionType="fadeScale">
-            <Head title="Blog" />
-            
-            {/* Hero Section */}
-            <section className="relative py-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+        >
+            <Link href={`/blog/${post.slug}`}>
+                <motion.div
+                    className="group relative h-full rounded-xl overflow-hidden border border-neutral-800 bg-gradient-to-br from-neutral-900 to-black hover:border-cyan-500/50 transition-all duration-300"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    whileHover={{ y: -5 }}
+                >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900">
+                        {post.cover_url ? (
+                            <img
+                                src={post.cover_url}
+                                alt={post.title}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                        ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-900">
+                                <svg className="h-12 w-12 text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                </svg>
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                    </div>
+
+                    <div className="p-5 space-y-3">
+                        {post.categories.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5">
+                                {post.categories.slice(0, 2).map((cat) => (
+                                    <span
+                                        key={cat.slug}
+                                        className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-[10px] font-medium text-cyan-400"
+                                    >
+                                        {cat.name}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        <h3 className="font-semibold text-white group-hover:text-cyan-400 transition-colors line-clamp-2">
+                            {post.title}
+                        </h3>
+
+                        {post.excerpt && (
+                            <p className="text-sm text-neutral-500 line-clamp-2">
+                                {post.excerpt}
+                            </p>
+                        )}
+
+                        <div className="flex items-center justify-between text-xs text-neutral-600 pt-2 border-t border-neutral-800">
+                            <span>{post.formatted_date}</span>
+                            <span>{post.reading_time_text}</span>
+                        </div>
+                    </div>
+
+                    <motion.div
+                        className="absolute inset-0 rounded-xl pointer-events-none"
+                        animate={{
+                            boxShadow: isHovered
+                                ? '0 0 30px rgba(0, 255, 255, 0.15)'
+                                : '0 0 0 rgba(0, 255, 255, 0)',
+                        }}
+                    />
+                </motion.div>
+            </Link>
+        </motion.div>
+    );
+}
+
+export default function Blog({ featuredPost, posts, categories, tags, filters }: Props) {
+    const [search, setSearch] = useState(filters.search || '');
+    const [selectedCategory, setSelectedCategory] = useState(filters.category || '');
+    const [selectedTag, setSelectedTag] = useState(filters.tag || '');
+
+    const handleFilter = () => {
+        router.get('/blog', {
+            search: search || undefined,
+            category: selectedCategory || undefined,
+            tag: selectedTag || undefined,
+        }, { preserveState: true });
+    };
+
+    const clearFilters = () => {
+        setSearch('');
+        setSelectedCategory('');
+        setSelectedTag('');
+        router.get('/blog');
+    };
+
+    const hasFilters = search || selectedCategory || selectedTag;
+
+    return (
+        <PortfolioLayout>
+            <Head title="Blog - AI Engineering & Research">
+                <meta name="description" content="Articles on AI, Machine Learning, Deep Learning, and software engineering. Thoughts and insights from an AI Engineer." />
+                <meta property="og:title" content="Blog - AI Engineering & Research" />
+                <meta property="og:description" content="Articles on AI, Machine Learning, Deep Learning, and software engineering." />
+                <meta property="og:type" content="website" />
+            </Head>
+
+            <div className="min-h-screen pt-24 pb-16">
+                <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                    {/* Header */}
                     <motion.div
                         className="text-center mb-12"
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider">
-                            // Research Notes & Insights
-                        </span>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
-                            <GlitchText as="span" className="text-cyan-400">
-                                Research Blog
+                        <div className="mb-4 flex items-center justify-center gap-3">
+                            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-cyan-500" />
+                            <span className="font-mono text-xs uppercase tracking-wider text-cyan-400">
+                                Knowledge Base
+                            </span>
+                            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-cyan-500" />
+                        </div>
+
+                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                            <GlitchText as="span" className="text-white">
+                                Blog & Articles
                             </GlitchText>
                         </h1>
-                        <p className="text-white/50 text-lg max-w-2xl mx-auto">
-                            Experiment notes, model comparisons, and practical insights from 
-                            building computer vision and NLP systems.
+
+                        <p className="text-neutral-400 max-w-2xl mx-auto">
+                            Thoughts, tutorials, and insights on AI, Machine Learning, 
+                            software engineering, and the future of technology.
                         </p>
                     </motion.div>
-                    
-                    {/* Search and filter */}
+
+                    {/* Filters */}
                     <motion.div
-                        className="max-w-3xl mx-auto mb-12"
+                        className="mb-8 space-y-4"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.5 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
                     >
-                        {/* Search bar */}
-                        <div className="relative mb-6">
-                            <input
-                                type="text"
-                                placeholder="Search research notes..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full px-5 py-4 pl-12 bg-white/5 border border-white/10 rounded-xl
-                                           text-white placeholder-white/40 font-mono text-sm
-                                           focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30
-                                           transition-all duration-300"
-                            />
-                            <svg 
-                                className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        
-                        {/* Category filters */}
-                        <div className="flex flex-wrap justify-center gap-2">
-                            {categories.map((category) => (
-                                <motion.button
-                                    key={category.id}
-                                    onClick={() => setActiveCategory(category.id)}
-                                    className={`
-                                        px-4 py-2 rounded-lg font-mono text-sm transition-all duration-300
-                                        ${activeCategory === category.id
-                                            ? 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/50'
-                                            : 'text-white/60 bg-white/5 border border-white/10 hover:text-white hover:border-white/30'
-                                        }
-                                    `}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                        <div className="flex gap-3">
+                            <div className="relative flex-1">
+                                <svg
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
                                 >
-                                    {category.label}
-                                </motion.button>
-                            ))}
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
+                                    placeholder="Search articles..."
+                                    className="w-full rounded-lg border border-neutral-800 bg-black/50 py-2.5 pl-10 pr-4 text-sm text-white placeholder-neutral-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                                />
+                            </div>
+                            <button
+                                onClick={handleFilter}
+                                className="rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-5 py-2.5 text-sm font-medium text-cyan-400 hover:bg-cyan-500/20 transition-colors"
+                            >
+                                Search
+                            </button>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => {
+                                    setSelectedCategory(e.target.value);
+                                    setTimeout(handleFilter, 0);
+                                }}
+                                className="rounded-lg border border-neutral-800 bg-black/50 px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                            >
+                                <option value="">All Categories</option>
+                                {categories.map((cat) => (
+                                    <option key={cat.slug} value={cat.slug}>
+                                        {cat.name} ({cat.posts_count})
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={selectedTag}
+                                onChange={(e) => {
+                                    setSelectedTag(e.target.value);
+                                    setTimeout(handleFilter, 0);
+                                }}
+                                className="rounded-lg border border-neutral-800 bg-black/50 px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                            >
+                                <option value="">All Tags</option>
+                                {tags.map((tag) => (
+                                    <option key={tag.slug} value={tag.slug}>
+                                        {tag.name} ({tag.posts_count})
+                                    </option>
+                                ))}
+                            </select>
+
+                            {hasFilters && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="rounded-lg border border-neutral-800 bg-black/50 px-3 py-2 text-sm text-neutral-400 hover:text-white hover:border-neutral-700 transition-colors"
+                                >
+                                    Clear Filters
+                                </button>
+                            )}
                         </div>
                     </motion.div>
-                    
-                    {/* Featured posts */}
-                    {featuredPosts.length > 0 && (
-                        <div className="mb-12">
-                            <h2 className="text-lg font-mono text-cyan-400 mb-6 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                                Featured Posts
-                            </h2>
-                            <div className="grid md:grid-cols-2 gap-6">
-                                {featuredPosts.map((post, index) => (
-                                    <BlogCard key={post.id} post={post} index={index} featured />
-                                ))}
-                            </div>
-                        </div>
+
+                    {/* Featured Post */}
+                    {featuredPost && !hasFilters && (
+                        <FeaturedPost post={featuredPost} />
                     )}
-                    
-                    {/* Regular posts */}
-                    {regularPosts.length > 0 && (
-                        <div>
-                            <h2 className="text-lg font-mono text-white/60 mb-6 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-white/40" />
-                                All Posts
-                            </h2>
-                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {/* Posts Grid */}
+                    {posts.data.length > 0 ? (
+                        <>
+                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 <AnimatePresence mode="popLayout">
-                                    {regularPosts.map((post, index) => (
-                                        <BlogCard key={post.id} post={post} index={index} />
+                                    {posts.data.map((post, index) => (
+                                        <PostCard key={post.id} post={post} index={index} />
                                     ))}
                                 </AnimatePresence>
                             </div>
-                        </div>
-                    )}
-                    
-                    {/* Empty state */}
-                    {filteredPosts.length === 0 && (
+
+                            {posts.last_page > 1 && (
+                                <motion.div
+                                    className="mt-12 flex items-center justify-center gap-2"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                >
+                                    {posts.links.map((link, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => link.url && router.get(link.url)}
+                                            disabled={!link.url}
+                                            className={`
+                                                rounded-lg px-4 py-2 text-sm font-medium transition-all
+                                                ${link.active
+                                                    ? 'bg-cyan-500 text-black'
+                                                    : link.url
+                                                    ? 'border border-neutral-800 text-neutral-400 hover:border-cyan-500/50 hover:text-cyan-400'
+                                                    : 'text-neutral-600 cursor-not-allowed'
+                                                }
+                                            `}
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    ))}
+                                </motion.div>
+                            )}
+                        </>
+                    ) : (
                         <motion.div
+                            className="text-center py-20"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-center py-20"
                         >
-                            <div className="text-5xl mb-4">📝</div>
-                            <p className="text-white/50 text-lg mb-4">No posts found matching your criteria.</p>
-                            <GlowButton
-                                variant="ghost"
-                                onClick={() => {
-                                    setActiveCategory('all');
-                                    setSearchQuery('');
-                                }}
+                            <svg
+                                className="mx-auto h-16 w-16 text-neutral-700 mb-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
                             >
-                                Clear Filters
-                            </GlowButton>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                            </svg>
+                            <h3 className="text-xl font-medium text-white mb-2">No posts found</h3>
+                            <p className="text-neutral-500">
+                                {hasFilters
+                                    ? 'Try adjusting your filters or search terms.'
+                                    : 'Check back soon for new articles!'}
+                            </p>
+                            {hasFilters && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="mt-4 text-cyan-400 hover:text-cyan-300"
+                                >
+                                    Clear all filters
+                                </button>
+                            )}
                         </motion.div>
                     )}
                 </div>
-            </section>
-            
-            {/* Newsletter CTA */}
-            <section className="relative py-20">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <GlassCard variant="gradient" size="lg" animatedBorder>
-                            <div className="text-center">
-                                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                                    Stay Updated on AI Research
-                                </h2>
-                                <p className="text-white/60 mb-8 max-w-xl mx-auto">
-                                    Subscribe for new research notes, model benchmarks, and practical ML insights.
-                                </p>
-                                
-                                <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                                    <input
-                                        type="email"
-                                        placeholder="Enter your email"
-                                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg
-                                                   text-white placeholder-white/40 text-sm
-                                                   focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30"
-                                    />
-                                    <GlowButton variant="cyan" type="submit">
-                                        Subscribe
-                                    </GlowButton>
-                                </form>
-                                
-                                <p className="text-white/30 text-xs mt-4">
-                                    No spam. Unsubscribe anytime.
-                                </p>
-                            </div>
-                        </GlassCard>
-                    </motion.div>
-                </div>
-            </section>
+            </div>
         </PortfolioLayout>
     );
 }

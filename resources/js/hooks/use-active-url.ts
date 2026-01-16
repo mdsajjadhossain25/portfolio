@@ -15,8 +15,18 @@ export function useActiveUrl() {
         return toUrl(urlToCheck) === urlToCompare;
     }
 
+    function urlStartsWith(
+        urlToCheck: NonNullable<InertiaLinkProps['href']>,
+        currentUrl?: string,
+    ) {
+        const urlToCompare = currentUrl ?? currentUrlPath;
+        const urlPath = toUrl(urlToCheck);
+        return urlToCompare.startsWith(urlPath);
+    }
+
     return {
         currentUrl: currentUrlPath,
         urlIsActive,
+        urlStartsWith,
     };
 }

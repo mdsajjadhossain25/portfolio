@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,9 +31,10 @@ Route::get('/services', function () {
     return Inertia::render('Services');
 })->name('services');
 
-Route::get('/blog', function () {
-    return Inertia::render('Blog');
-})->name('blog');
+// Blog routes
+Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::post('/blog/{post}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
 
 Route::get('/contact', function () {
     return Inertia::render('Contact');

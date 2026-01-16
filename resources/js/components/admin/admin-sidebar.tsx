@@ -8,6 +8,9 @@ import {
     Mail,
     ExternalLink,
     Home,
+    MessageSquare,
+    Tags,
+    Folder,
 } from 'lucide-react';
 
 import { NavFooter } from '@/components/nav-footer';
@@ -50,11 +53,39 @@ const adminNavGroups: NavGroup[] = [
                 title: 'Projects',
                 href: '/admin/projects',
                 icon: FolderKanban,
+                items: [
+                    {
+                        title: 'All Projects',
+                        href: '/admin/projects',
+                    },
+                    {
+                        title: 'Project Types',
+                        href: '/admin/projects/types',
+                    },
+                ],
             },
             {
                 title: 'Blog',
                 href: '/admin/blog',
                 icon: FileText,
+                items: [
+                    {
+                        title: 'All Posts',
+                        href: '/admin/blog/posts',
+                    },
+                    {
+                        title: 'Categories',
+                        href: '/admin/blog/categories',
+                    },
+                    {
+                        title: 'Tags',
+                        href: '/admin/blog/tags',
+                    },
+                    {
+                        title: 'Comments',
+                        href: '/admin/blog/comments',
+                    },
+                ],
             },
             {
                 title: 'Services',

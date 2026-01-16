@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\Admin\AboutProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogCommentController;
+use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\BlogTagController;
 use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProjectTypeController;
@@ -90,8 +94,55 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::post('/reorder', [ProjectTypeController::class, 'reorder'])->name('reorder');
     });
 
+    // Blog Management
+    Route::prefix('blog')->name('blog.')->group(function () {
+        // Blog Posts
+        Route::prefix('posts')->name('posts.')->group(function () {
+            Route::get('/', [BlogPostController::class, 'index'])->name('index');
+            Route::get('/create', [BlogPostController::class, 'create'])->name('create');
+            Route::post('/', [BlogPostController::class, 'store'])->name('store');
+            Route::get('/{post}/edit', [BlogPostController::class, 'edit'])->name('edit');
+            Route::put('/{post}', [BlogPostController::class, 'update'])->name('update');
+            Route::delete('/{post}', [BlogPostController::class, 'destroy'])->name('destroy');
+            Route::post('/{post}/toggle-featured', [BlogPostController::class, 'toggleFeatured'])->name('toggle-featured');
+            Route::post('/{post}/toggle-publish', [BlogPostController::class, 'togglePublish'])->name('toggle-publish');
+            Route::get('/{post}/preview', [BlogPostController::class, 'preview'])->name('preview');
+        });
+
+        // Blog Categories
+        Route::prefix('categories')->name('categories.')->group(function () {
+            Route::get('/', [BlogCategoryController::class, 'index'])->name('index');
+            Route::get('/create', [BlogCategoryController::class, 'create'])->name('create');
+            Route::post('/', [BlogCategoryController::class, 'store'])->name('store');
+            Route::get('/{category}/edit', [BlogCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{category}', [BlogCategoryController::class, 'update'])->name('update');
+            Route::delete('/{category}', [BlogCategoryController::class, 'destroy'])->name('destroy');
+            Route::post('/reorder', [BlogCategoryController::class, 'reorder'])->name('reorder');
+        });
+
+        // Blog Tags
+        Route::prefix('tags')->name('tags.')->group(function () {
+            Route::get('/', [BlogTagController::class, 'index'])->name('index');
+            Route::get('/create', [BlogTagController::class, 'create'])->name('create');
+            Route::post('/', [BlogTagController::class, 'store'])->name('store');
+            Route::get('/{tag}/edit', [BlogTagController::class, 'edit'])->name('edit');
+            Route::put('/{tag}', [BlogTagController::class, 'update'])->name('update');
+            Route::delete('/{tag}', [BlogTagController::class, 'destroy'])->name('destroy');
+        });
+
+        // Blog Comments
+        Route::prefix('comments')->name('comments.')->group(function () {
+            Route::get('/', [BlogCommentController::class, 'index'])->name('index');
+            Route::post('/{comment}/approve', [BlogCommentController::class, 'approve'])->name('approve');
+            Route::post('/{comment}/unapprove', [BlogCommentController::class, 'unapprove'])->name('unapprove');
+            Route::post('/{comment}/toggle-approval', [BlogCommentController::class, 'toggleApproval'])->name('toggle-approval');
+            Route::delete('/{comment}', [BlogCommentController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk-delete', [BlogCommentController::class, 'bulkDestroy'])->name('bulk-destroy');
+            Route::post('/bulk-approve', [BlogCommentController::class, 'bulkApprove'])->name('bulk-approve');
+        });
+    });
+
     // Placeholder routes for other sections
-    Route::get('/blog', fn () => Inertia::render('admin/blog/Index'))->name('blog');
     Route::get('/services', fn () => Inertia::render('admin/services/Index'))->name('services');
     Route::get('/contact', fn () => Inertia::render('admin/contact/Index'))->name('contact');
 });
