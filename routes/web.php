@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -21,9 +22,9 @@ Route::get('/', function () {
 // About page with dynamic data
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 
-Route::get('/projects', function () {
-    return Inertia::render('Projects');
-})->name('projects');
+// Projects pages with dynamic data
+Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
+Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
 Route::get('/services', function () {
     return Inertia::render('Services');

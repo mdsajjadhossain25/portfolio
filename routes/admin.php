@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AboutProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ExperienceController;
+use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ProjectTypeController;
 use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController;
 use Illuminate\Support\Facades\Route;
@@ -62,8 +64,33 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         });
     });
 
+    // Projects Management
+    Route::prefix('projects')->name('projects.')->group(function () {
+        Route::get('/', [ProjectController::class, 'index'])->name('index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('create');
+        Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
+        Route::put('/{project}', [ProjectController::class, 'update'])->name('update');
+        Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
+        Route::post('/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/reorder', [ProjectController::class, 'reorder'])->name('reorder');
+        Route::delete('/{project}/images/{image}', [ProjectController::class, 'deleteImage'])->name('delete-image');
+    });
+
+    // Project Types Management
+    Route::prefix('project-types')->name('project-types.')->group(function () {
+        Route::get('/', [ProjectTypeController::class, 'index'])->name('index');
+        Route::get('/create', [ProjectTypeController::class, 'create'])->name('create');
+        Route::post('/', [ProjectTypeController::class, 'store'])->name('store');
+        Route::get('/{project_type}/edit', [ProjectTypeController::class, 'edit'])->name('edit');
+        Route::put('/{project_type}', [ProjectTypeController::class, 'update'])->name('update');
+        Route::delete('/{project_type}', [ProjectTypeController::class, 'destroy'])->name('destroy');
+        Route::post('/{project_type}/toggle-active', [ProjectTypeController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/reorder', [ProjectTypeController::class, 'reorder'])->name('reorder');
+    });
+
     // Placeholder routes for other sections
-    Route::get('/projects', fn () => Inertia::render('admin/projects/Index'))->name('projects');
     Route::get('/blog', fn () => Inertia::render('admin/blog/Index'))->name('blog');
     Route::get('/services', fn () => Inertia::render('admin/services/Index'))->name('services');
     Route::get('/contact', fn () => Inertia::render('admin/contact/Index'))->name('contact');
