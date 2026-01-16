@@ -115,4 +115,20 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the contact form email settings. The owner_email is where
+    | notifications will be sent when someone submits the contact form.
+    | Set auto_reply to false to disable automatic reply emails.
+    |
+    */
+
+    'contact' => [
+        'owner_email' => env('CONTACT_OWNER_EMAIL', env('MAIL_FROM_ADDRESS')),
+        'auto_reply' => env('CONTACT_AUTO_REPLY', true),
+    ],
+
 ];

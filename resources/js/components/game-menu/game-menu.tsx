@@ -30,6 +30,19 @@ export function GameMenu({ className = '' }: GameMenuProps) {
     // Toggle menu with keyboard
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore keyboard shortcuts when user is typing in input fields
+            const target = e.target as HTMLElement;
+            const isInputFocused = 
+                target.tagName === 'INPUT' || 
+                target.tagName === 'TEXTAREA' || 
+                target.tagName === 'SELECT' ||
+                target.isContentEditable ||
+                target.closest('[contenteditable="true"]');
+            
+            if (isInputFocused) {
+                return;
+            }
+            
             // Toggle with Tab or M key
             if (e.key === 'Tab' || e.key === 'm' || e.key === 'M') {
                 e.preventDefault();

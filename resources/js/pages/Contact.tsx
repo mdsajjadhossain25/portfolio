@@ -6,11 +6,12 @@
  * - Form validation
  * - Success/error animations
  * - Contact information
+ * - Honeypot spam protection
  */
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Head } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { PortfolioLayout } from '@/layouts/portfolio';
 import { GlitchText } from '@/components/ui/glitch-text';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -145,70 +146,45 @@ function FormField({
 }
 
 export default function Contact() {
-    const [formState, setFormState] = useState({
+    const { flash } = usePage<{ flash: { success?: string; error?: string } }>().props;
+    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
         email: '',
         subject: '',
         message: '',
+        website: '', // Honeypot field
     });
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
     
-    const handleChange = (field: string) => (value: string) => {
-        setFormState(prev => ({ ...prev, [field]: value }));
+    // Handle flash messages
+    useEffect(() => {
+        if (flash?.success) {
+            setSubmitStatus('success');
+            reset();
+            // Reset status after 5 seconds
+            const timer = setTimeout(() => setSubmitStatus('idle'), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash?.success]);
+    
+    const handleChange = (field: keyof typeof data) => (value: string) => {
+        setData(field, value);
         // Clear error when user starts typing
         if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: '' }));
+            clearErrors(field);
         }
     };
     
-    const validateForm = () => {
-        const newErrors: Record<string, string> = {};
-        
-        if (!formState.name.trim()) {
-            newErrors.name = 'Name is required';
-        }
-        
-        if (!formState.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email)) {
-            newErrors.email = 'Please enter a valid email';
-        }
-        
-        if (!formState.subject.trim()) {
-            newErrors.subject = 'Subject is required';
-        }
-        
-        if (!formState.message.trim()) {
-            newErrors.message = 'Message is required';
-        } else if (formState.message.length < 20) {
-            newErrors.message = 'Message must be at least 20 characters';
-        }
-        
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-    
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         
-        if (!validateForm()) return;
-        
-        setIsSubmitting(true);
-        
-        // Simulate form submission
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Simulate success (in real app, this would be an API call)
-        setIsSubmitting(false);
-        setSubmitStatus('success');
-        
-        // Reset form
-        setFormState({ name: '', email: '', subject: '', message: '' });
-        
-        // Reset status after 5 seconds
-        setTimeout(() => setSubmitStatus('idle'), 5000);
+        post('/contact', {
+            preserveScroll: true,
+            onError: () => {
+                setSubmitStatus('error');
+            },
+        });
     };
     
     return (
@@ -249,7 +225,7 @@ export default function Contact() {
                         >
                             <HUDPanel
                                 title="Start Conversation"
-                                status={isSubmitting ? 'processing' : 'online'}
+                                status={processing ? 'processing' : 'online'}
                                 accentColor="cyan"
                                 dataReadout="COMMS_ACTIVE"
                             >
@@ -286,13 +262,25 @@ export default function Contact() {
                                             onSubmit={handleSubmit}
                                             className="space-y-6"
                                         >
+                                            {/* Honeypot field - hidden from users */}
+                                            <div className="hidden" aria-hidden="true">
+                                                <input
+                                                    type="text"
+                                                    name="website"
+                                                    value={data.website}
+                                                    onChange={(e) => setData('website', e.target.value)}
+                                                    tabIndex={-1}
+                                                    autoComplete="off"
+                                                />
+                                            </div>
+                                            
                                             <div className="grid sm:grid-cols-2 gap-6">
                                                 <FormField
                                                     label="Name"
                                                     name="name"
                                                     placeholder="Your name"
                                                     required
-                                                    value={formState.name}
+                                                    value={data.name}
                                                     onChange={handleChange('name')}
                                                     error={errors.name}
                                                 />
@@ -302,7 +290,7 @@ export default function Contact() {
                                                     type="email"
                                                     placeholder="your@email.com"
                                                     required
-                                                    value={formState.email}
+                                                    value={data.email}
                                                     onChange={handleChange('email')}
                                                     error={errors.email}
                                                 />
@@ -313,7 +301,7 @@ export default function Contact() {
                                                 name="subject"
                                                 placeholder="e.g., CV model for industrial inspection"
                                                 required
-                                                value={formState.subject}
+                                                value={data.subject}
                                                 onChange={handleChange('subject')}
                                                 error={errors.subject}
                                             />
@@ -323,7 +311,7 @@ export default function Contact() {
                                                 name="message"
                                                 placeholder="Describe your AI project, research collaboration idea, or role opportunity..."
                                                 required
-                                                value={formState.message}
+                                                value={data.message}
                                                 onChange={handleChange('message')}
                                                 error={errors.message}
                                                 textarea
@@ -337,10 +325,10 @@ export default function Contact() {
                                                     type="submit"
                                                     variant="cyan"
                                                     size="lg"
-                                                    disabled={isSubmitting}
+                                                    disabled={processing}
                                                     animatedBorder
                                                 >
-                                                    {isSubmitting ? (
+                                                    {processing ? (
                                                         <>
                                                             <motion.span
                                                                 animate={{ rotate: 360 }}

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProjectTypeController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController;
+use App\Http\Controllers\Admin\ContactMessageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -156,6 +157,21 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::post('/reorder', [ServiceController::class, 'reorder'])->name('reorder');
     });
 
-    // Placeholder routes for other sections
-    Route::get('/contact', fn () => Inertia::render('admin/contact/Index'))->name('contact');
+    // Inbox / Contact Messages Management
+    Route::prefix('inbox')->name('inbox.')->group(function () {
+        Route::get('/', [ContactMessageController::class, 'index'])->name('index');
+        Route::get('/{contactMessage}', [ContactMessageController::class, 'show'])->name('show');
+        Route::post('/{contactMessage}/mark-read', [ContactMessageController::class, 'markRead'])->name('mark-read');
+        Route::post('/{contactMessage}/mark-unread', [ContactMessageController::class, 'markUnread'])->name('mark-unread');
+        Route::post('/{contactMessage}/toggle-read', [ContactMessageController::class, 'toggleRead'])->name('toggle-read');
+        Route::post('/{contactMessage}/mark-replied', [ContactMessageController::class, 'markReplied'])->name('mark-replied');
+        Route::post('/{contactMessage}/toggle-replied', [ContactMessageController::class, 'toggleReplied'])->name('toggle-replied');
+        Route::delete('/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [ContactMessageController::class, 'bulkDestroy'])->name('bulk-destroy');
+        Route::post('/bulk-mark-read', [ContactMessageController::class, 'bulkMarkRead'])->name('bulk-mark-read');
+        Route::post('/bulk-mark-unread', [ContactMessageController::class, 'bulkMarkUnread'])->name('bulk-mark-unread');
+    });
+
+    // Legacy contact route redirect
+    Route::get('/contact', fn () => redirect()->route('admin.inbox.index'))->name('contact');
 });
