@@ -61,7 +61,7 @@ const adminNavGroups: NavGroup[] = [
                     },
                     {
                         title: 'Project Types',
-                        href: '/admin/projects/types',
+                        href: '/admin/project-types',
                     },
                 ],
             },

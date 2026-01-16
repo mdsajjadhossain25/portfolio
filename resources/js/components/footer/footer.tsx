@@ -112,7 +112,7 @@ export function Footer() {
                             <div>
                                 <span className="text-white font-bold text-xl tracking-wider">SAJJAD</span>
                                 <span className="text-cyan-400 font-bold text-xl">.</span>
-                                <span className="text-cyan-400/70 text-sm font-mono ml-1">DEV</span>
+                                <span className="text-cyan-400/70 text-sm font-mono ml-1">CODES</span>
                             </div>
                         </div>
                         
@@ -225,7 +225,7 @@ export function Footer() {
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         {/* Copyright */}
                         <p className="text-white/40 text-sm font-mono">
-                            © {currentYear} <span className="text-cyan-400/70">SAJJAD.DEV</span>. All rights reserved.
+                            © {currentYear} <span className="text-cyan-400/70">SAJJAD.CODES</span>. All rights reserved.
                         </p>
                         
                         {/* Tech stack badge */}

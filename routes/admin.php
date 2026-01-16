@@ -22,11 +22,11 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 |
 | Here are the routes for the admin dashboard. All routes are protected
-| by the auth middleware to ensure only authenticated users can access.
+| by the auth and admin middleware to ensure only admin users can access.
 |
 */
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Admin Dashboard
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
